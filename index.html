@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circle Line Pub Crawl 🍺</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow:#FFD329; --dark:#0D0D0D; --mid:#1A1A1A; --card:#222222;
+    --border:#333; --text:#F0EDE6; --muted:#888; --red:#E3173E; --green:#00B36B; --blue:#1E6FBA;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--dark);color:var(--text);font-family:'Barlow Condensed',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+  /* ── WELCOME SCREEN ── */
+  #welcomeScreen{
+    position:fixed;inset:0;background:var(--dark);z-index:500;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:24px;text-align:center;
+  }
+  .welcome-roundel{
+    width:80px;height:80px;background:var(--red);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:24px;
+  }
+  .welcome-roundel::after{content:'';position:absolute;width:104px;height:20px;background:var(--blue);border-radius:4px;}
+  .welcome-roundel-text{position:absolute;color:white;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;z-index:1;text-align:center;line-height:1.2;}
+  .welcome-title{font-family:'Black Han Sans',sans-serif;font-size:32px;letter-spacing:1px;color:var(--yellow);margin-bottom:6px;}
+  .welcome-sub{font-size:14px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:32px;}
+  .welcome-label{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+  .welcome-players{display:flex;flex-direction:column;gap:10px;width:100%;max-width:360px;max-height:50vh;overflow-y:auto;margin-bottom:16px;}
+  .welcome-player-btn{
+    background:var(--card);border:2px solid var(--border);border-radius:12px;
+    color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;
+    padding:16px;cursor:pointer;transition:all 0.2s;
+  }
+  .welcome-player-btn:hover,.welcome-player-btn:active{border-color:var(--yellow);background:#1e1b09;color:var(--yellow);}
+  .welcome-add-area{display:flex;gap:8px;width:100%;max-width:360px;margin-bottom:10px;}
+  .welcome-input{
+    flex:1;background:var(--card);border:2px solid var(--border);border-radius:10px;
+    color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;
+    padding:12px 14px;outline:none;transition:border-color 0.2s;
+  }
+  .welcome-input:focus{border-color:var(--yellow);}
+  .welcome-input::placeholder{color:var(--muted);}
+  .welcome-add-btn{
+    background:var(--yellow);border:none;border-radius:10px;color:var(--dark);
+    font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;
+    padding:12px 18px;cursor:pointer;
+  }
+  .welcome-note{font-size:12px;color:var(--muted);max-width:300px;line-height:1.5;}
+
+  /* ── HEADER ── */
+  header{
+    background:var(--yellow);color:var(--dark);padding:14px 20px;
+    display:flex;align-items:center;gap:12px;
+    position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(255,211,41,0.3);
+  }
+  .roundel{width:46px;height:46px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;}
+  .roundel::after{content:'';position:absolute;width:60px;height:13px;background:var(--blue);border-radius:3px;}
+  .roundel-text{position:absolute;color:white;font-size:7px;font-weight:700;font-family:'DM Mono',monospace;z-index:1;text-align:center;line-height:1.1;}
+  .header-info h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(16px,3.5vw,22px);letter-spacing:1px;line-height:1;}
+  .header-you{font-size:11px;font-weight:700;opacity:0.65;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+  .header-right{margin-left:auto;text-align:right;flex-shrink:0;}
+  .progress-big{font-family:'Black Han Sans',sans-serif;font-size:28px;line-height:1;}
+  .progress-label{font-size:10px;font-weight:700;opacity:0.6;text-transform:uppercase;letter-spacing:2px;}
+
+  .progress-track{background:rgba(0,0,0,0.2);height:6px;}
+  .progress-fill{height:100%;background:var(--dark);transition:width 0.5s cubic-bezier(0.34,1.56,0.64,1);border-radius:0 3px 3px 0;}
+
+  /* ── TABS ── */
+  .tabs{display:flex;background:var(--mid);border-bottom:2px solid var(--border);position:sticky;top:88px;z-index:99;}
+  .tab{flex:1;padding:11px 8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:none;border:none;color:var(--muted);cursor:pointer;transition:all 0.2s;border-bottom:3px solid transparent;margin-bottom:-2px;}
+  .tab.active{color:var(--yellow);border-bottom-color:var(--yellow);}
+
+  .panel{display:none;padding:16px;}
+  .panel.active{display:block;}
+
+  /* ── TRACKER ── */
+  .survival-banner{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--yellow);padding:12px 16px;margin-bottom:16px;border-radius:0 8px 8px 0;font-size:17px;font-weight:700;letter-spacing:1px;}
+  .survival-banner span{color:var(--yellow);}
+  .pubs-grid{display:flex;flex-direction:column;gap:6px;}
+  .pub-row{background:var(--card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;transition:all 0.2s;user-select:none;position:relative;overflow:hidden;}
+  .pub-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,211,41,0.08);transition:width 0.3s;}
+  .pub-row.done{border-color:var(--yellow);background:#1e1b09;}
+  .pub-row.done::before{width:100%;}
+  .pub-row:active{transform:scale(0.99);}
+  .stop-num{width:28px;height:28px;background:var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;flex-shrink:0;transition:all 0.3s;}
+  .pub-row.done .stop-num{background:var(--yellow);color:var(--dark);}
+  .circle-dot{width:9px;height:9px;border-radius:50%;background:var(--yellow);border:2px solid var(--dark);flex-shrink:0;}
+  .pub-info{flex:1;min-width:0;}
+  .pub-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pub-station{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+  .checkin-avatars{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
+  .checkin-avatar{background:var(--yellow);color:var(--dark);border-radius:4px;font-size:10px;font-weight:700;padding:1px 5px;font-family:'DM Mono',monospace;}
+  .check-icon{font-size:18px;opacity:0;transform:scale(0) rotate(-20deg);transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);flex-shrink:0;}
+  .pub-row.done .check-icon{opacity:1;transform:scale(1) rotate(0);}
+  .pub-thumb{width:36px;height:36px;border-radius:6px;object-fit:cover;border:2px solid var(--yellow);flex-shrink:0;}
+  .map-btn{background:var(--border);border:none;border-radius:6px;color:var(--muted);font-size:15px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s;}
+  .map-btn:hover{background:var(--blue);color:white;}
+
+  /* ── MODAL ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+  .modal-overlay.open{opacity:1;pointer-events:all;}
+  .modal-sheet{background:var(--mid);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px 16px 44px;width:100%;max-width:480px;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.34,1.2,0.64,1);max-height:90vh;overflow-y:auto;}
+  .modal-overlay.open .modal-sheet{transform:translateY(0);}
+  .modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+  .modal-title{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;text-align:center;}
+  .modal-pub-name{font-family:'Black Han Sans',sans-serif;font-size:22px;color:var(--yellow);text-align:center;margin-bottom:14px;}
+  .modal-pts-badge{background:rgba(255,211,41,0.15);border:1px solid rgba(255,211,41,0.3);border-radius:6px;padding:4px 10px;font-size:13px;font-family:'DM Mono',monospace;color:var(--yellow);margin-bottom:14px;text-align:center;}
+  .player-select-list{display:flex;flex-direction:column;gap:8px;}
+  .player-select-btn{background:var(--card);border:2px solid var(--border);border-radius:10px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;padding:14px 16px;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:all 0.2s;}
+  .player-select-btn:hover{border-color:var(--yellow);background:#1e1b09;}
+  .player-select-btn.already-done{border-color:var(--green);}
+  .btn-pts{font-size:13px;font-family:'DM Mono',monospace;color:var(--yellow);}
+  .btn-pts-done{font-size:13px;font-family:'DM Mono',monospace;color:var(--green);}
+  .modal-divider{border:none;border-top:1px solid var(--border);margin:18px 0 14px;}
+  .modal-section-title{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;text-align:center;}
+
+  /* photos in modal */
+  .pub-photos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
+  .pub-photo-wrap{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;}
+  .pub-photo-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+  .del-photo{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);border:none;border-radius:50%;color:white;font-size:12px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .del-photo:hover{background:var(--red);}
+  .photo-upload-area{border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:border-color 0.2s;position:relative;}
+  .photo-upload-area:hover{border-color:var(--yellow);}
+  .photo-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .photo-upload-icon{font-size:30px;margin-bottom:6px;}
+  .photo-upload-label{font-size:14px;color:var(--muted);font-weight:600;}
+
+  .modal-cancel{width:100%;margin-top:14px;padding:12px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+  .modal-cancel:hover{border-color:var(--red);color:var(--red);}
+
+  /* ── PHOTOS TAB ── */
+  .photos-empty{text-align:center;padding:48px 20px;color:var(--muted);}
+  .photos-empty .big{font-size:52px;margin-bottom:12px;}
+  .photos-empty p{font-size:15px;line-height:1.6;}
+  .photo-stop-section{margin-bottom:24px;}
+  .photo-stop-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .photo-stop-num{width:26px;height:26px;background:var(--yellow);color:var(--dark);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;flex-shrink:0;}
+  .photo-stop-name{font-size:16px;font-weight:700;}
+  .photo-stop-station{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+  .photos-masonry{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+  .photos-masonry img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;display:block;cursor:pointer;transition:transform 0.15s;}
+  .photos-masonry img:hover{transform:scale(1.03);}
+
+  /* ── LIGHTBOX ── */
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+  .lightbox.open{opacity:1;pointer-events:all;}
+  .lightbox img{max-width:95vw;max-height:90vh;border-radius:8px;object-fit:contain;}
+  .lightbox-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;color:white;font-size:20px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+
+  /* ── LEADERBOARD ── */
+  .leaderboard-list{display:flex;flex-direction:column;gap:8px;}
+  .player-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;animation:fadeIn 0.3s ease;}
+  .player-card:first-child{border-color:var(--yellow);}
+  .player-card:nth-child(2){border-color:#aaa;}
+  .player-card:nth-child(3){border-color:#cd7f32;}
+  .rank-badge{width:32px;height:32px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0;}
+  .player-card:first-child .rank-badge{background:var(--yellow);color:var(--dark);}
+  .player-card:nth-child(2) .rank-badge{background:#aaa;color:var(--dark);}
+  .player-card:nth-child(3) .rank-badge{background:#cd7f32;color:var(--dark);}
+  .player-info{flex:1;}
+  .player-name{font-size:17px;font-weight:700;}
+  .player-status-line{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;}
+  .status-selector{display:flex;gap:6px;margin-top:4px;}
+  .status-btn{font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:600;transition:all 0.2s;}
+  .status-btn.active-status{border-color:var(--green);color:var(--green);background:rgba(0,179,107,0.1);}
+  .status-btn.out-status{border-color:var(--red);color:var(--red);background:rgba(227,23,62,0.1);}
+  .player-score-area{display:flex;align-items:center;gap:8px;}
+  .score-display{font-family:'Black Han Sans',sans-serif;font-size:24px;color:var(--yellow);min-width:40px;text-align:right;}
+  .score-btns{display:flex;flex-direction:column;gap:3px;}
+  .score-btn{width:28px;height:24px;background:var(--border);border:none;border-radius:4px;color:var(--text);font-size:14px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+  .score-btn:hover{background:var(--yellow);color:var(--dark);}
+  .score-btn:disabled{opacity:0.2;cursor:not-allowed;}
+  .score-btn:disabled:hover{background:var(--border);color:var(--text);}
+  .lock-icon{font-size:16px;color:var(--muted);flex-shrink:0;width:32px;text-align:center;}
+  .remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px;border-radius:4px;flex-shrink:0;transition:color 0.2s;}
+  .remove-btn:hover{color:var(--red);}
+  .remove-btn:disabled{opacity:0.2;cursor:not-allowed;}
+
+  /* admin unlock bar */
+  .admin-bar{
+    background:var(--card);border:1px solid var(--border);border-radius:10px;
+    padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;
+  }
+  .admin-bar.unlocked{border-color:var(--yellow);}
+  .admin-status{flex:1;font-size:14px;font-weight:700;}
+  .admin-status small{display:block;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;font-weight:400;}
+  .admin-btn{
+    background:var(--border);border:none;border-radius:8px;color:var(--text);
+    font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
+    padding:8px 14px;cursor:pointer;transition:all 0.2s;letter-spacing:1px;
+  }
+  .admin-btn:hover{background:var(--yellow);color:var(--dark);}
+  .admin-btn.unlock-btn{background:rgba(255,211,41,0.15);border:1px solid rgba(255,211,41,0.4);color:var(--yellow);}
+
+  /* admin password modal */
+  .pw-modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:250;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+  .pw-modal.open{opacity:1;pointer-events:all;}
+  .pw-box{background:var(--mid);border:1px solid var(--border);border-radius:16px;padding:28px 24px;width:100%;max-width:320px;text-align:center;}
+  .pw-title{font-family:'Black Han Sans',sans-serif;font-size:22px;color:var(--yellow);margin-bottom:6px;}
+  .pw-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+  .pw-input{width:100%;background:var(--card);border:2px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Mono',monospace;font-size:20px;font-weight:700;padding:14px;outline:none;text-align:center;letter-spacing:4px;transition:border-color 0.2s;margin-bottom:12px;}
+  .pw-input:focus{border-color:var(--yellow);}
+  .pw-input.error{border-color:var(--red);animation:shake 0.3s ease;}
+  .pw-submit{width:100%;background:var(--yellow);border:none;border-radius:10px;color:var(--dark);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;padding:14px;cursor:pointer;margin-bottom:10px;}
+  .pw-cancel{background:none;border:none;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;cursor:pointer;padding:6px;}
+
+  .pace-section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:16px;}
+  .pace-section h3{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);margin-bottom:12px;}
+  .pace-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .pace-label{font-size:13px;color:var(--muted);min-width:80px;}
+  .pace-input{background:var(--border);border:1px solid #444;border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:15px;padding:6px 10px;width:90px;outline:none;}
+  .pace-input:focus{border-color:var(--yellow);}
+  .pace-result{margin-top:12px;padding:10px 14px;background:rgba(255,211,41,0.08);border:1px solid rgba(255,211,41,0.3);border-radius:8px;font-size:14px;line-height:1.6;}
+  .pace-result strong{color:var(--yellow);}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+  .empty-state .emoji{font-size:48px;margin-bottom:12px;}
+
+  footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;font-family:'DM Mono',monospace;border-top:1px solid var(--border);margin-top:20px;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--yellow);color:var(--dark);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;padding:12px 24px;border-radius:30px;z-index:400;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .pub-row.just-done{animation:pop 0.3s ease;}
+  .pub-row.current-stop{border-color:#4a9eff !important;background:#0d1a2e !important;box-shadow:0 0 0 2px rgba(74,158,255,0.2);}
+  .pub-row.current-stop .stop-num{background:#4a9eff;color:#fff;}
+  .pub-name-row{display:flex;align-items:baseline;gap:8px;}
+  .pub-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--yellow);opacity:0.8;font-weight:400;white-space:nowrap;}
+  .pub-row.done .pub-time{opacity:0.4;}
+</style>
+</head>
+<body>
+
+<!-- ══ WELCOME SCREEN ══ -->
+<div id="welcomeScreen">
+  <div class="welcome-roundel"><span class="welcome-roundel-text">PUB<br>CRAWL</span></div>
+  <div class="welcome-title">Circle Line</div>
+  <div class="welcome-sub">Pub Crawl · 27 Stops</div>
+
+  <!-- STEP 1: How to enable — shown first -->
+  <div id="welcomeStep1" style="display:none;">
+    <div style="background:rgba(255,211,41,0.1);border:1px solid rgba(255,211,41,0.3);border-radius:14px;padding:20px;display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;">
+      <span style="font-size:28px;line-height:1;flex-shrink:0;">👇</span>
+      <div>
+        <div style="font-size:19px;font-weight:700;color:var(--yellow);margin-bottom:8px;line-height:1.2;">How to get started</div>
+        <div style="font-size:16px;color:var(--text);line-height:1.6;">Add your name 👇 then tap it 👇 — the app will ask for permission. <strong style="color:var(--yellow);">Tap Allow!</strong></div>
+      </div>
+    </div>
+
+    <!-- Add name input -->
+    <div id="welcomeAddArea">
+    <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:10px;">Add your name 👇</div>
+    <div class="welcome-add-area">
+      <input class="welcome-input" type="text" id="welcomeNameInput" placeholder="Add your name..." maxlength="20" onkeydown="if(event.key==='Enter')welcomeAddPlayer()">
+      <button class="welcome-add-btn" onclick="welcomeAddPlayer()">+</button>
+    </div>
+    <p class="welcome-note">Add everyone's names, then each person taps themselves on their own phone.</p>
+    </div>
+    <div class="welcome-players" id="welcomePlayerList"></div>
+  </div>
+
+  <!-- STEP 2: Notification info — shown after first name added -->
+  <div id="welcomeStep2" style="display:none;margin-top:20px;display:none;">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <div style="background:rgba(255,211,41,0.1);border:1px solid rgba(255,211,41,0.3);border-radius:14px;padding:20px;display:flex;align-items:flex-start;gap:14px;">
+        <span style="font-size:28px;line-height:1;flex-shrink:0;">🔔</span>
+        <div>
+          <div style="font-size:19px;font-weight:700;color:var(--yellow);margin-bottom:8px;line-height:1.2;">Turn on notifications</div>
+          <div style="font-size:16px;color:var(--text);line-height:1.6;">This app will buzz your phone when it's nearly time to leave each pub — so you never miss a stop.</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;align-items:flex-start;gap:14px;">
+        <span style="font-size:28px;line-height:1;flex-shrink:0;">⏰</span>
+        <div>
+          <div style="font-size:19px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.2;">Two alerts per pub</div>
+          <div style="font-size:16px;color:var(--muted);line-height:1.6;"><strong style="color:var(--text);">10 minutes before</strong> you need to leave, then again <strong style="color:var(--text);">right when it's time to go.</strong></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STEP 3: iPhone tip — shown after step 2 -->
+  <div id="welcomeStep3" style="display:none;margin-top:12px;">
+    <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;align-items:flex-start;gap:14px;">
+      <span style="font-size:28px;line-height:1;flex-shrink:0;">📱</span>
+      <div>
+        <div style="font-size:19px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.2;">iPhone users</div>
+        <div style="font-size:16px;color:var(--muted);line-height:1.6;">Add this page to your <strong style="color:var(--text);">Home Screen</strong> first — notifications only work as a home screen app on iPhone.<br><br><span style="font-size:14px;color:var(--muted);">Safari → Share button → Add to Home Screen</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAME PICKER — shown after confirming instructions -->
+  <div id="welcomeNamePicker" style="display:none;margin-top:20px;">
+    <div style="font-size:19px;font-weight:700;color:var(--yellow);margin-bottom:14px;text-align:center;">Who are you? 👇</div>
+    <div id="welcomeNamePickerList" style="display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<header>
+  <div class="roundel"><span class="roundel-text">PUB<br>CRAWL</span></div>
+  <div class="header-info">
+    <h1>Circle Line Pub Crawl</h1>
+    <div class="header-you" id="headerYou"></div>
+  </div>
+  <div class="header-right">
+    <div class="progress-big" id="headerCount">0/27</div>
+    <div class="progress-label">pubs done</div>
+    <div id="syncStatus" style="font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);text-align:right;margin-top:2px;">⏳ syncing</div>
+  </div>
+</header>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('tracker',this)">🗺️ Tracker</button>
+  <button class="tab" onclick="switchTab('photos',this)">📸 Photos</button>
+  <button class="tab" onclick="switchTab('leaderboard',this)">🏆 Board</button>
+  <button class="tab" onclick="switchTab('admin',this)">⚙️ Admin</button>
+</div>
+
+<div class="panel active" id="panel-tracker">
+  <div id="countdownBanner" style="display:none;margin:0 0 10px;background:rgba(255,211,41,0.1);border:1px solid rgba(255,211,41,0.4);border-radius:10px;padding:10px 16px;text-align:center;">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;">LEAVE CURRENT PUB IN</div>
+    <div id="countdownTimer" style="font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:var(--yellow);letter-spacing:3px;line-height:1.1;">--:--</div>
+    <div id="countdownLabel" style="font-size:11px;color:var(--muted);margin-top:3px;"></div>
+  </div>
+  <div id="trackerPaceSummary" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);text-align:center;padding:6px 0 8px;"></div>
+  <div class="survival-banner">Status: <span id="survivalText">Not started yet… get to the pub! 🍺</span></div>
+  <div class="pubs-grid" id="pubsGrid"></div>
+</div>
+
+<div class="panel" id="panel-photos">
+  <div id="photosContent"></div>
+</div>
+
+<div class="panel" id="panel-leaderboard">
+  <div class="leaderboard-list" id="leaderboardList"></div>
+</div>
+
+<div class="panel" id="panel-admin">
+  <div id="adminGate" style="display:block;">
+    <div style="text-align:center;padding:40px 20px;">
+      <div style="font-size:48px;margin-bottom:12px;">🔐</div>
+      <div style="font-family:'Black Han Sans',sans-serif;font-size:22px;color:var(--yellow);margin-bottom:8px;">ADMIN ACCESS</div>
+      <div style="color:var(--muted);font-size:14px;margin-bottom:20px;">Enter the password to manage the crawl</div>
+      <input class="pw-input" type="password" id="adminTabPwInput" placeholder="••••" maxlength="20"
+        onkeydown="if(event.key==='Enter')submitAdminTabPassword()"
+        style="box-sizing:border-box;max-width:200px;">
+      <button class="pw-submit" onclick="submitAdminTabPassword()">Unlock Admin</button>
+    </div>
+  </div>
+  <div id="adminPanel" style="display:none;">
+    <div class="admin-bar unlocked" style="margin-bottom:16px;">
+      <div class="admin-status">🔓 Admin mode active<small>Full control enabled</small></div>
+      <button class="admin-btn" onclick="lockAdmin()" style="background:#333;color:var(--muted);">Lock</button>
+    </div>
+
+    <div class="pace-section">
+      <h3>⏱ Timeline</h3>
+      <div class="pace-row">
+        <span class="pace-label">Start time</span>
+        <input class="pace-input" type="time" id="startTime" value="11:00" oninput="calcPace()">
+      </div>
+      <div class="pace-row">
+        <span class="pace-label">Mins per pub</span>
+        <input class="pace-input" type="number" id="minsPerPub" value="20" min="5" max="120" oninput="calcPace()" style="width:70px;">
+      </div>
+      <div class="pace-result" id="paceResult">Set your times above!</div>
+    </div>
+
+    <div class="pace-section" style="margin-top:12px;">
+      <h3>📍 Current Stop</h3>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:12px;">Override which pub the group is at — updates tracker highlight for everyone.</div>
+      <div id="adminPubList" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;"></div>
+    </div>
+
+    <div class="pace-section" style="margin-top:12px;">
+      <h3>🔔 Notifications</h3>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:12px;">Get a buzz when it's time to leave a pub.</div>
+      <button id="notifBtn" onclick="requestNotifications()" class="pw-submit" style="width:100%;margin-bottom:8px;">Enable Notifications</button>
+      <div id="notifStatus" style="font-size:12px;color:var(--muted);text-align:center;"></div>
+    </div>
+
+    <div class="pace-section" style="margin-top:12px;">
+      <h3>✏️ Edit Scores</h3>
+      <div id="adminScoreList"></div>
+    </div>
+
+    <div class="pace-section" style="margin-top:12px;">
+      <h3>👥 Players</h3>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:12px;">Add or remove players from the crawl.</div>
+      <div id="adminPlayerList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"></div>
+      <div style="display:flex;gap:8px;">
+        <input id="adminAddNameInput" type="text" placeholder="Player name…"
+          onkeydown="if(event.key==='Enter')adminAddPlayer()"
+          style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;padding:10px 14px;outline:none;">
+        <button onclick="adminAddPlayer()"
+          style="background:var(--yellow);border:none;border-radius:8px;color:var(--dark);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;padding:10px 16px;cursor:pointer;white-space:nowrap;">+ Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>🍺 Drink responsibly · 27 stops · Circle Line</footer>
+<div class="toast" id="toast"></div>
+
+<!-- ══ CHECK-IN MODAL ══ -->
+<div class="modal-overlay" id="modalOverlay" onclick="bgClose(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Stop check-in</div>
+    <div class="modal-pub-name" id="modalPubName"></div>
+    <div class="modal-pts-badge" id="modalPtsBadge"></div>
+    <div style="text-align:right;margin-bottom:10px;"><button id="modalAdminBtn" onclick="toggleModalAdmin()" style="background:none;border:1px solid var(--border);border-radius:20px;color:var(--muted);font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;padding:4px 12px;cursor:pointer;letter-spacing:1px;">🔒 ADMIN</button></div>
+    <div class="player-select-list" id="playerSelectList"></div>
+    <hr class="modal-divider">
+    <div class="modal-section-title">📸 Pint photos</div>
+    <div class="pub-photos-grid" id="modalPhotosGrid"></div>
+    <div class="photo-upload-area" id="photoUploadArea">
+      <input type="file" accept="image/*" capture="environment" id="photoFileInput" onchange="handlePhotoUpload(event)">
+      <div class="photo-upload-icon">📷</div>
+      <div class="photo-upload-label">Tap to take a photo or upload one</div>
+    </div>
+    <button class="modal-cancel" onclick="closeModal()">Done</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN PASSWORD MODAL ══ -->
+<div class="pw-modal" id="pwModal">
+  <div class="pw-box">
+    <div class="pw-title">🔐 Admin Access</div>
+    <div class="pw-sub">Enter the password to edit scores</div>
+    <input class="pw-input" type="password" id="pwInput" placeholder="••••" maxlength="20" onkeydown="if(event.key==='Enter')submitPassword()">
+    <button class="pw-submit" onclick="submitPassword()">Unlock</button>
+    <button class="pw-cancel" onclick="closePwModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- ══ LIGHTBOX ══ -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+// ── CLOUDINARY STATE SYNC ──
+// Uses Cloudinary to store shared game state as a JSON text file
+const CL_CLOUD    = 'dwcrs0vkk';
+const CL_PRESET   = 'pub-crawl';
+const CL_STATE_ID = 'pub-crawl/gamestate';
+let syncInterval = null;
+let lastStateStr = '';
+
+async function syncRead() {
+  if (!currentUser) return;
+  const statusEl = document.getElementById('syncStatus');
+  try {
+    const url = 'https://res.cloudinary.com/' + CL_CLOUD + '/raw/upload/' + CL_STATE_ID + '.json?t=' + Date.now();
+    const res = await fetch(url);
+    if (!res.ok) {
+      if (res.status === 404) {
+        // No state file yet — normal on first run, just wait for first write
+        if (statusEl) statusEl.textContent = '⏳ waiting...';
+      } else {
+        if (statusEl) statusEl.textContent = '⚠️ sync err ' + res.status;
+      }
+      return;
+    }
+    const data = await res.json();
+    const str = JSON.stringify(data);
+    if (statusEl) statusEl.textContent = '✅ synced';
+    if (str === lastStateStr) return; // nothing changed
+    lastStateStr = str;
+    players          = data.players          || players;
+    visited          = data.visited          || visited;
+    playerVisits     = data.playerVisits     || playerVisits;
+    pubPhotos        = data.pubPhotos        || pubPhotos;
+    adminCurrentStop = data.adminCurrentStop || adminCurrentStop;
+    localStorage.setItem('clp_players',  JSON.stringify(players));
+    localStorage.setItem('clp_visited',  JSON.stringify(visited));
+    localStorage.setItem('clp_pvisits',  JSON.stringify(playerVisits));
+    localStorage.setItem('clp_currentStop', JSON.stringify(adminCurrentStop));
+    try { localStorage.setItem('clp_photos', JSON.stringify(pubPhotos)); } catch(e) {}
+    renderTracker();
+    renderLeaderboard();
+    if (document.getElementById('panel-photos').classList.contains('active')) renderPhotosTab();
+    if (adminUnlocked) renderAdminPanel();
+  } catch(e) {
+    console.warn('Sync read failed', e);
+    if (statusEl) statusEl.textContent = '❌ offline';
+  }
+}
+
+async function syncWrite() {
+  if (!currentUser) return;
+  const statusEl = document.getElementById('syncStatus');
+  try {
+    if (statusEl) statusEl.textContent = '⏳ saving...';
+    const state = JSON.stringify({
+      players, visited, playerVisits, pubPhotos,
+      adminCurrentStop: adminCurrentStop || null
+    });
+    lastStateStr = state;
+    const blob = new Blob([state], { type: 'application/json' });
+    const fd = new FormData();
+    fd.append('file', blob, 'gamestate.json');
+    fd.append('upload_preset', CL_PRESET);
+    fd.append('public_id', CL_STATE_ID);
+    fd.append('resource_type', 'raw');
+    fd.append('overwrite', 'true');
+    fd.append('invalidate', 'true');
+    const res = await fetch('https://api.cloudinary.com/v1_1/' + CL_CLOUD + '/raw/upload', {
+      method: 'POST',
+      body: fd
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      console.warn('Sync write error:', data);
+      if (statusEl) statusEl.textContent = '❌ ' + (data.error?.message || 'write err');
+    } else {
+      if (statusEl) statusEl.textContent = '✅ synced';
+    }
+  } catch(e) {
+    console.warn('Sync write failed', e);
+    if (statusEl) statusEl.textContent = '❌ write failed';
+  }
+}
+
+function startSync() {
+  if (syncInterval) return;
+  syncRead();
+  syncInterval = setInterval(syncRead, 10000);
+}
+
+const ADMIN_PASSWORD = 'pub';
+const PUB_POINTS = 20;
+const CLOUDINARY_CLOUD = 'dwcrs0vkk';
+const CLOUDINARY_PRESET = 'pub-crawl';
+const CLOUDINARY_BASE = 'https://res.cloudinary.com/' + CLOUDINARY_CLOUD + '/image/upload/';
+
+function openMap(q) {
+  const enc = encodeURIComponent(q);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS) {
+    window.location.href = 'comgooglemaps://?q=' + enc + '&zoom=16';
+    setTimeout(() => { window.location.href = 'maps://?q=' + enc; }, 600);
+  } else {
+    window.location.href = 'geo:0,0?q=' + enc;
+  }
+}
+
+const PUBS = [
+  {stop:1,  station:'Victoria',           name:'The Shakespeare',      q:'The Shakespeare pub Victoria London SW1V 1JU'},
+  {stop:2,  station:"St James's Park",    name:'The Old Star',          q:'The Old Star pub 54 Broadway London SW1H 0DB'},
+  {stop:3,  station:'Westminster',        name:"St Stephen's Tavern",   q:'St Stephens Tavern 10 Bridge St London SW1A 2JR'},
+  {stop:4,  station:'Embankment',         name:'The Princess of Wales', q:'The Princess of Wales pub Embankment London'},
+  {stop:5,  station:'Temple',             name:'Temple Brew House',     q:'Temple Brew House 46 Essex St London WC2R 3JF'},
+  {stop:6,  station:'Blackfriars',        name:'The Blackfriar',        q:'The Blackfriar 174 Queen Victoria St London EC4V 4EG'},
+  {stop:7,  station:'Mansion House',      name:'Ye Olde Watling',       q:'Ye Olde Watling 29 Watling St London EC4M 9BR'},
+  {stop:8,  station:'Cannon Street',      name:'Cannick Tapps',         q:'The Cannick Tapps 17 Cannon St London EC4M 5UF'},
+  {stop:9,  station:'Monument',           name:'The Monument',          q:'The Monument pub Fish Street Hill London EC3R 8AH'},
+  {stop:10, station:'Tower Hill',         name:'The Minories',          q:'The Minories pub 64 Minories London EC3N 1JQ'},
+  {stop:11, station:'Aldgate',            name:'The Hoop and Grapes',   q:'The Hoop and Grapes 47 Aldgate High St London'},
+  {stop:12, station:'Liverpool Street',   name:'Hamilton Hall',         q:'Hamilton Hall pub Liverpool Street Station London'},
+  {stop:13, station:'Moorgate',           name:'The Globe',             q:'The Globe pub 83 Moorgate London EC2M 6SQ'},
+  {stop:14, station:'Barbican',           name:'The Shakespeare',       q:'The Shakespeare pub 2 Goswell Rd London EC1M 7AA'},
+  {stop:15, station:'Farringdon',         name:'The Castle',            q:'The Castle pub 34 Cowcross St London EC1M 6DB'},
+  {stop:16, station:"King's Cross",       name:'The Parcel Yard',       q:'The Parcel Yard pub Kings Cross Station London'},
+  {stop:17, station:'Euston Square',      name:'The Euston Tap',        q:'The Euston Tap 190 Euston Rd London NW1 2EF'},
+  {stop:18, station:'Great Portland St',  name:'The Albany',            q:'The Albany pub 240 Great Portland St London W1W 5QU'},
+  {stop:19, station:'Baker Street',       name:'The Metropolitan Bar',  q:'The Metropolitan Bar Baker St Station London'},
+  {stop:20, station:'Edgware Road',       name:'The Chapel',            q:'The Chapel pub 48 Chapel St London NW1 5DP'},
+  {stop:21, station:'Paddington',         name:'Sawyers Arms',          q:'Sawyers Arms 57 Praed St London W2 1NS'},
+  {stop:22, station:'Bayswater',          name:'Bayswater Arms',        q:'Bayswater Arms pub Queensway London W2'},
+  {stop:23, station:'Notting Hill Gate',  name:'Old Swan',              q:'Old Swan pub Notting Hill Gate London W11'},
+  {stop:24, station:'High St Kensington', name:'The Britannia',         q:'The Britannia pub 1 Allen St London W8 6UX'},
+  {stop:25, station:'Gloucester Road',    name:'The Stanhope Arms',     q:'The Stanhope Arms 97 Gloucester Rd London SW7 4SS'},
+  {stop:26, station:'South Kensington',   name:'Hoop & Toy',            q:'Hoop and Toy pub 34 Thurloe Pl London SW7 2HQ'},
+  {stop:27, station:'Sloane Square',      name:'The Antelope',          q:'The Antelope pub 22 Eaton Terrace London SW1W 8EZ'},
+];
+
+const SURVIVAL = [
+  [0,'Not started yet… get to the pub! 🍺'],
+  [1,"You've started! One down, 26 to go 🚇"],
+  [5,'Warming up nicely. The legs still work 🦵'],
+  [9,'Pub #9 — feeling it yet? Stay strong 💪'],
+  [14,'HALFWAY! This is where legends are made 🏅'],
+  [18,'Seriously impressive. The finish line beckons 🎯'],
+  [23,'Four pubs to go. The body is a temple 🏛️'],
+  [26,'ONE PUB LEFT. You absolute hero 🙌'],
+  [27,"COMPLETED IT MATE. You've done it! 🏆🎉"],
+];
+
+// ── STATE ──
+let players      = JSON.parse(localStorage.getItem('clp_players')  || '[]');
+let visited      = JSON.parse(localStorage.getItem('clp_visited')  || '[]');
+let playerVisits = JSON.parse(localStorage.getItem('clp_pvisits')  || '{}');
+let pubPhotos    = JSON.parse(localStorage.getItem('clp_photos')   || '{}');
+let currentUser  = localStorage.getItem('clp_currentUser') || null; // player name
+let adminUnlocked = false;
+let modalStop = null;
+let adminCurrentStop = JSON.parse(localStorage.getItem('clp_currentStop') || 'null');
+
+function save() {
+  localStorage.setItem('clp_players',  JSON.stringify(players));
+  localStorage.setItem('clp_visited',  JSON.stringify(visited));
+  localStorage.setItem('clp_pvisits',  JSON.stringify(playerVisits));
+  if (currentUser) localStorage.setItem('clp_currentUser', currentUser);
+  if (adminCurrentStop) localStorage.setItem('clp_currentStop', JSON.stringify(adminCurrentStop));
+  try { localStorage.setItem('clp_photos', JSON.stringify(pubPhotos)); }
+  catch(e) { showToast('Storage full — delete some photos'); }
+  syncWrite(); // push to shared cloud
+}
+
+function currentPlayerIndex() {
+  return players.findIndex(p => p.name === currentUser);
+}
+
+function playerStopCount(pi) {
+  return Object.values(playerVisits).filter(arr => arr.includes(pi)).length;
+}
+
+// ── WELCOME SCREEN ──
+function renderWelcome() {
+  const list = document.getElementById('welcomePlayerList');
+  list.innerHTML = '';
+  document.getElementById('welcomeStep1').style.display = 'block';
+
+  if (players.length === 0) {
+    document.getElementById('welcomeStep2').style.display = 'none';
+    document.getElementById('welcomeStep3').style.display = 'none';
+    return;
+  }
+
+  // At least one name added — hide the add name input, show notification steps
+  document.getElementById('welcomeAddArea').style.display = 'none';
+  document.getElementById('welcomeStep2').style.display = 'flex';
+  document.getElementById('welcomeStep2').style.flexDirection = 'column';
+  document.getElementById('welcomeStep3').style.display = 'block';
+
+  // Single confirmation button
+  const btn = document.createElement('button');
+  btn.style.cssText = 'width:100%;font-size:18px;padding:18px;background:var(--yellow);color:var(--dark);border:none;border-radius:14px;font-weight:900;letter-spacing:1px;margin-top:8px;cursor:pointer;';
+  btn.textContent = 'I have read all the instructions below 👇';
+  btn.onclick = () => {
+    document.getElementById('welcomeStep1').style.display = 'none';
+    document.getElementById('welcomeStep2').style.display = 'none';
+    document.getElementById('welcomeStep3').style.display = 'none';
+    document.getElementById('welcomeNamePicker').style.display = 'block';
+    renderNamePicker();
+  };
+  list.appendChild(btn);
+}
+
+function renderNamePicker() {
+  const pickerList = document.getElementById('welcomeNamePickerList');
+  pickerList.innerHTML = '';
+  players.forEach(p => {
+    const btn = document.createElement('button');
+    btn.style.cssText = 'width:100%;font-size:20px;font-weight:700;padding:18px;background:var(--card);border:1px solid var(--border);border-radius:14px;color:var(--text);cursor:pointer;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;';
+    btn.textContent = p.name;
+    btn.onclick = () => selectUser(p.name);
+    pickerList.appendChild(btn);
+  });
+}
+
+function welcomeAddPlayer() {
+  const input = document.getElementById('welcomeNameInput');
+  const name = input.value.trim();
+  if (!name) return;
+  if (players.find(p => p.name === name)) { showToast('Name already added!'); return; }
+  players.push({ name, score: 0, status: 'active' });
+  input.value = '';
+  save();
+  renderWelcome();
+}
+
+function selectUser(name) {
+  currentUser = name;
+  localStorage.setItem('clp_currentUser', name);
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('headerYou').textContent = '👤 ' + name;
+  renderTracker();
+  renderLeaderboard();
+  calcPace();
+  askForNotifications();
+  startSync(); // begin polling for other players' updates
+  syncWrite(); // push our current state up immediately
+}
+
+// ── TRACKER ──
+function getSchedule() {
+  const s = document.getElementById('startTime').value || '11:00';
+  const mpp = parseInt(document.getElementById('minsPerPub').value) || 20;
+  const [sh, sm] = s.split(':').map(Number);
+  return buildSchedule(sh * 60 + sm, mpp);
+}
+
+function renderTracker() {
+  const grid = document.getElementById('pubsGrid');
+  grid.innerHTML = '';
+  const schedule = getSchedule();
+  PUBS.forEach(pub => {
+    const visitors = playerVisits[pub.stop] || [];
+    const globalDone = visited.includes(pub.stop) || visitors.length > 0;
+    const photos = pubPhotos[pub.stop] || [];
+    const row = document.createElement('div');
+    const isCurrent = adminCurrentStop === pub.stop;
+    row.className = 'pub-row' + (globalDone ? ' done' : '') + (isCurrent ? ' current-stop' : '');
+    row.id = 'pub-' + pub.stop;
+    const avatars = visitors.map(pi => players[pi] ? '<span class="checkin-avatar">' + players[pi].name.slice(0,3).toUpperCase() + '</span>' : '').join('');
+    const thumb = photos.length ? '<img class="pub-thumb" src="' + photos[photos.length-1] + '" alt="pint">' : '';
+    const sched = schedule[pub.stop - 1];
+    const timeLabel = '<span class="pub-time">' + fmtTime(sched.arrive) + '</span>';
+    row.innerHTML =
+      '<div class="stop-num">' + pub.stop + '</div>' +
+      '<div class="circle-dot"></div>' +
+      '<div class="pub-info">' +
+        '<div class="pub-name-row"><span class="pub-name">' + pub.name + '</span>' + timeLabel + '</div>' +
+        '<div class="pub-station">' + pub.station + ' · leave ' + fmtTime(sched.leave) + '</div>' +
+        (avatars ? '<div class="checkin-avatars">' + avatars + '</div>' : '') +
+      '</div>' +
+      thumb +
+      '<div class="check-icon">🍺</div>' +
+      '<button class="map-btn" title="Open in Maps">📍</button>';
+    row.querySelector('.map-btn').addEventListener('click', e => { e.stopPropagation(); openMap(pub.q); });
+    row.addEventListener('click', () => openModal(pub.stop));
+    grid.appendChild(row);
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const allDone = new Set([...visited, ...Object.keys(playerVisits).filter(k => playerVisits[k].length > 0).map(Number)]);
+  const n = allDone.size;
+  document.getElementById('headerCount').textContent = n + '/27';
+  document.getElementById('progressFill').style.width = (n/27*100) + '%';
+  let msg = SURVIVAL[0][1];
+  for (const [t,txt] of SURVIVAL) { if (n >= t) msg = txt; }
+  document.getElementById('survivalText').textContent = msg;
+}
+
+// ── CHECK-IN MODAL ──
+function openModal(stop) {
+  modalStop = stop;
+  const pub = PUBS.find(p => p.stop === stop);
+  document.getElementById('modalPubName').textContent = '#' + stop + ' ' + pub.name;
+  document.getElementById('modalPtsBadge').textContent = '+' + PUB_POINTS + ' pts per person';
+
+  const list = document.getElementById('playerSelectList');
+  list.innerHTML = '';
+
+  if (players.length === 0) {
+    // No players set up — simple global toggle
+    const btn = document.createElement('button');
+    btn.className = 'player-select-btn';
+    const done = visited.includes(stop);
+    btn.innerHTML = `<span>${done ? '✓ Checked in — tap to undo' : '✅ Check in'}</span>`;
+    btn.onclick = () => {
+      const idx = visited.indexOf(stop);
+      if (idx === -1) { visited.push(stop); showToast('🍺 Stop ' + stop + ' checked in!'); }
+      else { visited.splice(idx, 1); }
+      save(); renderTracker(); openModal(stop);
+    };
+    list.appendChild(btn);
+  } else {
+    const ci = currentPlayerIndex();
+    const visitors = playerVisits[stop] || [];
+
+    // MY check-in button — interactive
+    if (ci >= 0) {
+      const myDone = visitors.includes(ci);
+      const myBtn = document.createElement('button');
+      myBtn.className = 'player-select-btn' + (myDone ? ' already-done' : '');
+      myBtn.style.borderColor = myDone ? '' : 'var(--yellow)';
+      myBtn.innerHTML =
+        '<span>' + players[ci].name + ' <span style="font-size:11px;color:var(--muted);font-weight:400">(you)</span></span>' +
+        '<span class="' + (myDone ? 'btn-pts-done' : 'btn-pts') + '">' + (myDone ? '\u2713 Checked in' : '+ Check me in') + '</span>';
+      myBtn.onclick = () => {
+        if (!playerVisits[stop]) playerVisits[stop] = [];
+        const vi = playerVisits[stop].indexOf(ci);
+        if (vi === -1) {
+          playerVisits[stop].push(ci);
+          players[ci].score += PUB_POINTS;
+          showToast('\ud83c\udf7a Checked in! +' + PUB_POINTS + ' pts');
+        } else {
+          playerVisits[stop].splice(vi, 1);
+          players[ci].score = Math.max(0, players[ci].score - PUB_POINTS);
+          showToast('Removed your check-in');
+        }
+        const any = (playerVisits[stop] || []).length > 0;
+        if (any && !visited.includes(stop)) visited.push(stop);
+        if (!any) visited = visited.filter(s => s !== stop);
+        save(); renderTracker(); renderLeaderboard(); openModal(stop);
+      };
+      list.appendChild(myBtn);
+    }
+
+    // Others — interactive if admin, read-only otherwise
+    const others = players.map((p,i) => ({p,i})).filter(({i}) => i !== ci);
+    if (others.length) {
+      const divider = document.createElement('div');
+      divider.style.cssText = 'font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:center;padding:10px 0 4px;';
+      divider.textContent = adminUnlocked ? '✏️ Admin — editing others' : 'Others';
+      list.appendChild(divider);
+      others.forEach(({p, i: pi}) => {
+        const done = visitors.includes(pi);
+        if (adminUnlocked) {
+          // Admin — fully interactive button for each person
+          const btn = document.createElement('button');
+          btn.className = 'player-select-btn' + (done ? ' already-done' : '');
+          btn.innerHTML = '<span>' + p.name + '</span>' +
+            '<span class="' + (done ? 'btn-pts-done' : 'btn-pts') + '">' + (done ? '\u2713 Checked in' : '+ Check in') + '</span>';
+          btn.onclick = () => {
+            if (!playerVisits[stop]) playerVisits[stop] = [];
+            const vi = playerVisits[stop].indexOf(pi);
+            if (vi === -1) {
+              playerVisits[stop].push(pi);
+              players[pi].score += PUB_POINTS;
+              showToast('\ud83c\udf7a ' + p.name + ' checked in!');
+            } else {
+              playerVisits[stop].splice(vi, 1);
+              players[pi].score = Math.max(0, players[pi].score - PUB_POINTS);
+              showToast('Removed ' + p.name);
+            }
+            const any = (playerVisits[stop] || []).length > 0;
+            if (any && !visited.includes(stop)) visited.push(stop);
+            if (!any) visited = visited.filter(s => s !== stop);
+            save(); renderTracker(); renderLeaderboard(); openModal(stop);
+          };
+          list.appendChild(btn);
+        } else {
+          // Normal user — read only
+          const row = document.createElement('div');
+          row.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;opacity:0.65;';
+          row.innerHTML = '<span style="font-size:16px;font-weight:700;">' + p.name + '</span>' +
+            '<span class="' + (done ? 'btn-pts-done' : '') + '" style="font-size:13px;">' + (done ? '\u2713 Here' : '\u2014') + '</span>';
+          list.appendChild(row);
+        }
+      });
+    }
+  }
+
+  renderModalPhotos(stop);
+  updateModalAdminBtn();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function renderModalPhotos(stop) {
+  const photos = pubPhotos[stop] || [];
+  const grid = document.getElementById('modalPhotosGrid');
+  grid.innerHTML = '';
+  photos.forEach((src, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'pub-photo-wrap';
+    const img = document.createElement('img');
+    img.src = src; img.alt = 'pint';
+    img.onclick = () => openLightbox(src);
+    const del = document.createElement('button');
+    del.className = 'del-photo'; del.textContent = '✕';
+    del.onclick = () => deletePhoto(stop, i);
+    wrap.appendChild(img); wrap.appendChild(del);
+    grid.appendChild(wrap);
+  });
+}
+
+function bgClose(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); modalStop = null; }
+
+// ── PHOTOS (Cloudinary) ──
+async function handlePhotoUpload(e) {
+  const file = e.target.files[0];
+  if (!file || modalStop === null) return;
+  e.target.value = '';
+
+  const pub = PUBS.find(p => p.stop === modalStop);
+  const folder = 'pub-crawl/stop-' + String(modalStop).padStart(2,'0') + '-' + pub.station.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  const uploader = document.getElementById('photoUploadArea');
+  uploader.style.opacity = '0.5';
+  showToast('📤 Uploading...');
+
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_PRESET);
+    formData.append('folder', folder);
+    formData.append('context', 'stop=' + modalStop + '|pub=' + pub.name + '|uploader=' + (currentUser || 'unknown'));
+
+    const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/image/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!res.ok) throw new Error('Upload failed: ' + res.status);
+    const data = await res.json();
+    const url = data.secure_url;
+
+    if (!pubPhotos[modalStop]) pubPhotos[modalStop] = [];
+    pubPhotos[modalStop].push(url);
+    save(); renderModalPhotos(modalStop); renderTracker();
+    if (document.getElementById('panel-photos').classList.contains('active')) renderPhotosTab();
+    showToast('📸 Photo uploaded!');
+  } catch (err) {
+    console.error(err);
+    showToast('Upload failed — check connection');
+  } finally {
+    uploader.style.opacity = '1';
+  }
+}
+
+function deletePhoto(stop, idx) {
+  pubPhotos[stop].splice(idx, 1);
+  if (!pubPhotos[stop].length) delete pubPhotos[stop];
+  save(); renderModalPhotos(stop); renderTracker();
+  if (document.getElementById('panel-photos').classList.contains('active')) renderPhotosTab();
+  showToast('Photo removed from app');
+}
+
+function renderPhotosTab() {
+  const el = document.getElementById('photosContent');
+  const stops = PUBS.filter(p => pubPhotos[p.stop] && pubPhotos[p.stop].length > 0);
+  if (!stops.length) {
+    el.innerHTML = '<div class="photos-empty"><div class="big">📸</div><p>No photos yet!<br>Check in at a pub and snap your pint.</p></div>';
+    return;
+  }
+  el.innerHTML = '';
+  stops.forEach(pub => {
+    const section = document.createElement('div');
+    section.className = 'photo-stop-section';
+    section.innerHTML =
+      '<div class="photo-stop-header">' +
+        '<div class="photo-stop-num">' + pub.stop + '</div>' +
+        '<div><div class="photo-stop-name">' + pub.name + '</div><div class="photo-stop-station">' + pub.station + '</div></div>' +
+      '</div>';
+    const masonry = document.createElement('div');
+    masonry.className = 'photos-masonry';
+    pubPhotos[pub.stop].forEach(src => {
+      const img = document.createElement('img');
+      img.src = src; img.alt = 'pint';
+      img.onclick = () => openLightbox(src);
+      masonry.appendChild(img);
+    });
+    section.appendChild(masonry);
+    el.appendChild(section);
+  });
+}
+
+function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightbox').classList.add('open'); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ── MODAL ADMIN BUTTON ──
+function toggleModalAdmin() {
+  if (adminUnlocked) {
+    adminUnlocked = false;
+    showToast('🔒 Admin locked');
+    if (modalStop !== null) openModal(modalStop);
+  } else {
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').classList.remove('error');
+    document.getElementById('pwModal').classList.add('open');
+    setTimeout(() => document.getElementById('pwInput').focus(), 300);
+  }
+}
+
+function updateModalAdminBtn() {
+  const btn = document.getElementById('modalAdminBtn');
+  if (!btn) return;
+  if (adminUnlocked) {
+    btn.textContent = '🔓 ADMIN ON';
+    btn.style.borderColor = 'var(--yellow)';
+    btn.style.color = 'var(--yellow)';
+  } else {
+    btn.textContent = '🔒 ADMIN';
+    btn.style.borderColor = 'var(--border)';
+    btn.style.color = 'var(--muted)';
+  }
+}
+
+// ── ADMIN TAB ──
+function submitAdminTabPassword() {
+  const inp = document.getElementById('adminTabPwInput');
+  if (inp.value === ADMIN_PASSWORD) {
+    adminUnlocked = true;
+    document.getElementById('adminGate').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    renderAdminPanel();
+    showToast('🔓 Admin unlocked!');
+  } else {
+    inp.classList.add('error');
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 600);
+  }
+}
+
+function lockAdmin() {
+  adminUnlocked = false;
+  document.getElementById('adminGate').style.display = 'block';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('adminTabPwInput').value = '';
+  renderLeaderboard();
+  showToast('🔒 Admin locked');
+}
+
+// ── ADMIN PLAYER MANAGEMENT ──
+function adminAddPlayer() {
+  const inp = document.getElementById('adminAddNameInput');
+  const name = inp.value.trim();
+  if (!name) return;
+  if (players.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+    showToast('Name already in the crawl!'); return;
+  }
+  players.push({ name, score: 0, status: 'active' });
+  inp.value = '';
+  save(); renderLeaderboard(); renderAdminPanel();
+  showToast('✅ ' + name + ' added!');
+}
+
+function adminRemovePlayer(i) {
+  const p = players[i];
+  if (!confirm('Remove ' + p.name + ' from the crawl?')) return;
+  // Clean up their visits
+  Object.keys(playerVisits).forEach(stop => {
+    playerVisits[stop] = playerVisits[stop].filter(pi => pi !== i).map(pi => pi > i ? pi - 1 : pi);
+  });
+  players.splice(i, 1);
+  if (currentUser === p.name) currentUser = null;
+  save(); renderTracker(); renderLeaderboard(); renderAdminPanel();
+  showToast('Removed ' + p.name);
+}
+
+function renderAdminPanel() {
+  if (!adminUnlocked) return;
+
+  // Pub selector
+  const pubList = document.getElementById('adminPubList');
+  if (pubList) {
+    pubList.innerHTML = '';
+    PUBS.forEach(pub => {
+      const isCurrent = adminCurrentStop === pub.stop;
+      const btn = document.createElement('button');
+      btn.style.cssText = 'background:' + (isCurrent ? 'rgba(255,211,41,0.15)' : 'var(--card)') + ';border:1px solid ' + (isCurrent ? 'var(--yellow)' : 'var(--border)') + ';border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:var(--text);font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:700;width:100%;text-align:left;gap:8px;';
+      btn.innerHTML = '<span>#' + pub.stop + ' ' + pub.name + ' <span style="color:var(--muted);font-weight:400;font-size:12px;">' + pub.station + '</span></span>' + (isCurrent ? '<span style="color:var(--yellow);font-size:12px;white-space:nowrap;">▶ NOW</span>' : '');
+      btn.onclick = () => { adminCurrentStop = pub.stop; save(); renderAdminPanel(); renderTracker(); showToast('📍 Now at #' + pub.stop + ' ' + pub.name); };
+      pubList.appendChild(btn);
+    });
+  }
+
+  // Score editor
+  const scoreList = document.getElementById('adminScoreList');
+  if (scoreList) {
+    scoreList.innerHTML = '';
+    players.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);';
+      row.innerHTML = '<span style="font-weight:700;font-size:15px;">' + p.name + '</span>' +
+        '<div style="display:flex;align-items:center;gap:10px;">' +
+          '<button onclick="changeScore(' + i + ',-20)" style="background:var(--border);border:none;color:var(--text);width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;">−</button>' +
+          '<span style="font-family:DM Mono,monospace;font-size:14px;min-width:52px;text-align:center;">' + p.score + ' pts</span>' +
+          '<button onclick="changeScore(' + i + ',20)" style="background:var(--border);border:none;color:var(--text);width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;">+</button>' +
+        '</div>';
+      scoreList.appendChild(row);
+    });
+    if (!players.length) scoreList.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px 0;">No players yet</div>';
+  }
+
+  // Player list
+  const playerList = document.getElementById('adminPlayerList');
+  if (playerList) {
+    playerList.innerHTML = '';
+    if (!players.length) {
+      playerList.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:8px 0;">No players yet — add one below</div>';
+    } else {
+      players.forEach((p, i) => {
+        const row = document.createElement('div');
+        row.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;';
+        const isMe = p.name === currentUser;
+        row.innerHTML =
+          '<div style="display:flex;align-items:center;gap:10px;">' +
+            '<span style="font-size:16px;font-weight:700;">' + p.name + '</span>' +
+            (isMe ? '<span style="font-size:10px;background:var(--yellow);color:var(--dark);padding:2px 6px;border-radius:10px;font-weight:900;">YOU</span>' : '') +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<span style="font-family:DM Mono,monospace;font-size:12px;color:var(--muted);">' + playerStopCount(i) + '/27 pubs · ' + p.score + 'pts</span>' +
+            (isMe ? '' : '<button onclick="adminRemovePlayer(' + i + ')" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:13px;padding:4px 8px;cursor:pointer;">✕</button>') +
+          '</div>';
+        playerList.appendChild(row);
+      });
+    }
+  }
+
+  updateNotifBtn();
+}
+
+// ── NOTIFICATIONS ──
+function updateNotifBtn() {
+  const btn = document.getElementById('notifBtn');
+  const status = document.getElementById('notifStatus');
+  if (!btn) return;
+  if (!('Notification' in window)) {
+    btn.textContent = '🔕 Not supported on this browser';
+    btn.disabled = true;
+    return;
+  }
+  if (Notification.permission === 'granted') {
+    btn.textContent = '✅ Notifications enabled';
+    btn.style.background = '#2a4a2a';
+    btn.style.borderColor = '#4a8a4a';
+    btn.disabled = true;
+    if (status) status.textContent = "You'll get a buzz when it's time to leave each pub";
+  } else if (Notification.permission === 'denied') {
+    btn.textContent = '🚫 Notifications blocked';
+    btn.disabled = true;
+    if (status) status.textContent = 'Enable in your browser settings';
+  } else {
+    btn.textContent = '🔔 Enable Notifications';
+    btn.disabled = false;
+  }
+}
+
+function requestNotifications() {
+  if (!('Notification' in window)) { showToast('Not supported'); return; }
+  Notification.requestPermission().then(perm => {
+    updateNotifBtn();
+    if (perm === 'granted') {
+      showToast('🔔 Notifications on!');
+      new Notification('Circle Line Pub Crawl 🍺', { body: 'Notifications are ready. See you at the pub!', icon: '' });
+    } else {
+      showToast('Notifications blocked');
+    }
+  });
+}
+
+function fire10MinWarning(pubName) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  new Notification('⏰ 10 mins left at ' + pubName, {
+    body: 'Start wrapping up — time to leave soon!',
+    icon: '',
+    tag: 'ten-min-warning',
+    renotify: true
+  });
+}
+
+function fireLeaveNotification(pubName, nextStation) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  new Notification('🚇 Time to leave! ' + pubName, {
+    body: 'Head to ' + nextStation + ' station now',
+    icon: '',
+    tag: 'leave-now',
+    renotify: true
+  });
+}
+
+// ── LEGACY (modal pw still works) ──
+function promptAdminUnlock() {
+  if (adminUnlocked) { lockAdmin(); return; }
+  document.getElementById('pwInput').value = '';
+  document.getElementById('pwInput').classList.remove('error');
+  document.getElementById('pwModal').classList.add('open');
+  setTimeout(() => document.getElementById('pwInput').focus(), 300);
+}
+
+function submitPassword() {
+  const val = document.getElementById('pwInput').value;
+  if (val === ADMIN_PASSWORD) {
+    adminUnlocked = true;
+    document.getElementById('pwModal').classList.remove('open');
+    renderLeaderboard();
+    showToast('🔓 Admin unlocked!');
+    if (modalStop !== null) openModal(modalStop);
+  } else {
+    const inp = document.getElementById('pwInput');
+    inp.classList.add('error');
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 500);
+  }
+}
+
+function closePwModal() { document.getElementById('pwModal').classList.remove('open'); }
+
+function updateAdminBar() { /* legacy no-op */ }
+
+// ── LEADERBOARD ──
+function changeScore(i, d) {
+  if (!adminUnlocked) { showToast('🔒 Unlock admin to edit scores'); return; }
+  players[i].score = Math.max(0, players[i].score + d);
+  save(); renderLeaderboard(); renderAdminPanel();
+}
+function setStatus(i, s) { players[i].status = s; save(); renderLeaderboard(); }
+
+function renderLeaderboard() {
+  const sorted = [...players].sort((a,b) => b.score - a.score);
+  const list = document.getElementById('leaderboardList');
+  list.innerHTML = '';
+  if (!players.length) {
+    list.innerHTML = '<div class="empty-state"><div class="emoji">🍻</div><p>No players yet — add names on the welcome screen</p></div>';
+    return;
+  }
+  sorted.forEach((p, rank) => {
+    const oi = players.indexOf(p);
+    const emoji = p.status==='out'?'😵':p.status==='toilet'?'🚽':'🍺';
+    const pubs = playerStopCount(oi);
+    const isMe = p.name === currentUser;
+    const card = document.createElement('div');
+    card.className = 'player-card';
+    if (isMe) card.style.outline = '2px solid rgba(255,211,41,0.4)';
+
+    const scoreControls = adminUnlocked
+      ? `<div class="player-score-area">
+          <div class="score-display">${p.score}</div>
+          <div class="score-btns">
+            <button class="score-btn" onclick="changeScore(${oi},10)">▲</button>
+            <button class="score-btn" onclick="changeScore(${oi},-10)">▼</button>
+          </div>
+        </div>`
+      : `<div class="player-score-area">
+          <div class="score-display">${p.score}</div>
+          <div class="lock-icon">🔒</div>
+        </div>`;
+
+    card.innerHTML = `
+      <div class="rank-badge">${rank===0?'👑':rank+1}</div>
+      <div class="player-info">
+        <div class="player-name">${p.name} ${emoji}${isMe?' <span style="font-size:11px;color:var(--yellow);font-family:DM Mono,monospace">YOU</span>':''}</div>
+        <div class="player-status-line">${pubs}/27 pubs · ${p.score} pts</div>
+        <div class="status-selector">
+          <button class="status-btn ${p.status==='active'?'active-status':''}" onclick="setStatus(${oi},'active')">Going</button>
+          <button class="status-btn ${p.status==='toilet'?'active-status':''}" onclick="setStatus(${oi},'toilet')">Nature 🚽</button>
+          <button class="status-btn ${p.status==='out'?'out-status':''}" onclick="setStatus(${oi},'out')">Tapped out</button>
+        </div>
+      </div>
+      ${scoreControls}`;
+    list.appendChild(card);
+  });
+}
+
+// ── PACE ──
+// Travel times in minutes between consecutive pubs (walk + tube + walk to next pub)
+// stop N -> stop N+1
+const TRAVEL_MINS = [
+  5,  // 1 Victoria -> 2 St James's Park (short walk)
+  7,  // 2 St James's Park -> 3 Westminster
+  5,  // 3 Westminster -> 4 Embankment
+  8,  // 4 Embankment -> 5 Temple (walk, no direct tube)
+  6,  // 5 Temple -> 6 Blackfriars
+  5,  // 6 Blackfriars -> 7 Mansion House
+  4,  // 7 Mansion House -> 8 Cannon Street
+  4,  // 8 Cannon Street -> 9 Monument
+  7,  // 9 Monument -> 10 Tower Hill
+  6,  // 10 Tower Hill -> 11 Aldgate
+  8,  // 11 Aldgate -> 12 Liverpool Street
+  5,  // 12 Liverpool Street -> 13 Moorgate
+  5,  // 13 Moorgate -> 14 Barbican
+  7,  // 14 Barbican -> 15 Farringdon
+  12, // 15 Farringdon -> 16 King's Cross (longer leg)
+  5,  // 16 King's Cross -> 17 Euston Square
+  5,  // 17 Euston Square -> 18 Great Portland St
+  5,  // 18 Great Portland St -> 19 Baker Street
+  6,  // 19 Baker Street -> 20 Edgware Road
+  8,  // 20 Edgware Road -> 21 Paddington
+  7,  // 21 Paddington -> 22 Bayswater
+  5,  // 22 Bayswater -> 23 Notting Hill Gate
+  6,  // 23 Notting Hill Gate -> 24 High St Kensington
+  7,  // 24 High St Kensington -> 25 Gloucester Road
+  5,  // 25 Gloucester Road -> 26 South Kensington
+  10, // 26 South Kensington -> 27 Sloane Square
+];
+
+let countdownInterval = null;
+
+function buildSchedule(startMins, minsPerPub) {
+  // Returns array of {stop, arrive, leave, travelToNext}
+  const schedule = [];
+  let cursor = startMins;
+  for (let i = 0; i < 27; i++) {
+    const arrive = cursor;
+    const leave = arrive + minsPerPub;
+    const travel = TRAVEL_MINS[i] || 0;
+    schedule.push({ stop: i + 1, arrive, leave, travelToNext: travel });
+    cursor = leave + travel;
+  }
+  return schedule;
+}
+
+function fmtTime(totalMins) {
+  const h = Math.floor(((totalMins % 1440) + 1440) % 1440 / 60);
+  const m = ((totalMins % 1440) + 1440) % 1440 % 60;
+  return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+}
+
+function fmtDuration(mins) {
+  const h = Math.floor(Math.abs(mins) / 60);
+  const m = Math.abs(mins) % 60;
+  return (h > 0 ? h + 'h ' : '') + m + 'm';
+}
+
+function calcPace() {
+  const s = document.getElementById('startTime').value;
+  const mpp = parseInt(document.getElementById('minsPerPub').value) || 20;
+  if (!s) return;
+  const [sh, sm] = s.split(':').map(Number);
+  const startMins = sh * 60 + sm;
+  const schedule = buildSchedule(startMins, mpp);
+  const last = schedule[26];
+  const totalMins = last.leave - startMins;
+  const h = Math.floor(totalMins / 60), m = totalMins % 60;
+  const finishTime = fmtTime(last.leave);
+
+  document.getElementById('paceResult').innerHTML =
+    'Total time: <strong>' + h + 'h ' + m + 'm</strong> &nbsp;·&nbsp; ' +
+    'Finish: <strong>~' + finishTime + '</strong><br>' +
+    (mpp < 15 ? '⚠️ Very tight pace!' : mpp < 25 ? '✅ Solid pace!' : '😌 Nice and leisurely.');
+
+  startCountdown(schedule, mpp);
+  // Update tracker pace summary bar
+  const summary = document.getElementById('trackerPaceSummary');
+  if (summary) summary.innerHTML = 
+    'Total: <strong style="color:var(--text);">' + h + 'h ' + m + 'm</strong>' +
+    ' &nbsp;·&nbsp; Finish: <strong style="color:var(--yellow);">~' + finishTime + '</strong>' +
+    ' &nbsp;' + (mpp < 15 ? '⚠️ Very tight!' : mpp < 25 ? '✅ Solid pace!' : '😌 Easy does it');
+  // Re-render tracker rows with updated times
+  if (document.getElementById('pubsGrid').children.length > 0) renderTracker();
+}
+
+function startCountdown(schedule, minsPerPub) {
+  if (countdownInterval) clearInterval(countdownInterval);
+  const banner = document.getElementById('countdownBanner');
+  const timerEl = document.getElementById('countdownTimer');
+  const labelEl = document.getElementById('countdownLabel');
+
+  function tick() {
+    const now = new Date();
+    const nowMins = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+
+    // Find the current pub — which stop are we at right now?
+    // Current stop = last stop whose arrive time has passed
+    let currentIdx = -1;
+    for (let i = 0; i < schedule.length; i++) {
+      if (nowMins >= schedule[i].arrive) currentIdx = i;
+    }
+
+    if (currentIdx === -1) {
+      // Haven't started yet
+      const minsToStart = schedule[0].arrive - nowMins;
+      banner.style.display = 'block';
+      timerEl.style.color = 'var(--yellow)';
+      const totalSecs = Math.round(minsToStart * 60);
+      const mm = Math.floor(totalSecs / 60), ss = totalSecs % 60;
+      timerEl.textContent = (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
+      labelEl.textContent = 'Until crawl starts at ' + fmtTime(schedule[0].arrive);
+      return;
+    }
+
+    const cur = schedule[currentIdx];
+
+    if (currentIdx === 26 && nowMins >= cur.leave) {
+      // All done!
+      banner.style.display = 'block';
+      timerEl.textContent = '🏆';
+      timerEl.style.color = 'var(--yellow)';
+      labelEl.textContent = 'Crawl complete! Legends.';
+      clearInterval(countdownInterval);
+      return;
+    }
+
+    // Time left at current pub before we need to leave
+    const secsLeft = Math.round((cur.leave - nowMins) * 60);
+
+    banner.style.display = 'block';
+
+    // 10-min warning
+    if (secsLeft >= 599 && secsLeft <= 601) {
+      fire10MinWarning(PUBS[currentIdx].name);
+    }
+    if (secsLeft < 0) {
+      // Overdue — should have left already
+      const overdueMin = Math.round(-secsLeft / 60);
+      if (secsLeft >= -61 && secsLeft < 0) fireLeaveNotification(PUBS[currentIdx].name, currentIdx < 26 ? PUBS[currentIdx+1].station : 'the finish');
+      timerEl.textContent = '-' + String(Math.floor(Math.abs(secsLeft) / 60)).padStart(2,'0') + ':' + String(Math.abs(secsLeft) % 60).padStart(2,'0');
+      timerEl.style.color = '#ff4444';
+      labelEl.textContent = '⚠️ ' + overdueMin + 'm overdue! Head to ' + PUBS[currentIdx].station + ' now';
+    } else {
+      const mm = Math.floor(secsLeft / 60), ss = secsLeft % 60;
+      timerEl.textContent = (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
+      timerEl.style.color = secsLeft < 180 ? '#ff9944' : 'var(--yellow)';
+      if (currentIdx < 26) {
+        labelEl.textContent = 'Stop #' + cur.stop + ' ' + PUBS[currentIdx].name + ' → leave for ' + PUBS[currentIdx + 1].station + ' by ' + fmtTime(cur.leave);
+      }
+    }
+  }
+
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+// ── TABS ──
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  if (name==='photos') renderPhotosTab();
+  if (name==='admin') {
+    if (adminUnlocked) {
+      document.getElementById('adminGate').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      renderAdminPanel();
+    } else {
+      document.getElementById('adminGate').style.display = 'block';
+      document.getElementById('adminPanel').style.display = 'none';
+    }
+  }
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── ASK FOR NOTIFICATIONS ON LAUNCH ──
+function askForNotifications() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted' || Notification.permission === 'denied') return;
+  // Small delay so the page has settled before the prompt appears
+  setTimeout(() => {
+    Notification.requestPermission().then(perm => {
+      updateNotifBtn();
+      if (perm === 'granted') {
+        showToast('🔔 Notifications on!');
+        new Notification('Circle Line Pub Crawl 🍺', { body: 'Notifications ready — see you at the pub!' });
+      }
+    });
+  }, 1500);
+}
+
+// ── INIT ──
+calcPace();
+const savedUser = localStorage.getItem('clp_currentUser');
+if (savedUser && players.find(p => p.name === savedUser)) {
+  currentUser = savedUser;
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('headerYou').textContent = '👤 ' + currentUser;
+  renderTracker();
+  renderLeaderboard();
+  startSync(); // returning user — start syncing immediately
+} else {
+  renderWelcome(); // new user — welcome screen, no sync until logged in
+}
+</script>
+</body>
+</html>
