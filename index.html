@@ -515,10 +515,7 @@ async function syncWrite() {
     fd.append('file', blob, 'gamestate.json');
     fd.append('upload_preset', CL_PRESET);
     fd.append('public_id', CL_STATE_ID);
-    fd.append('resource_type', 'raw');
-    fd.append('overwrite', 'true');
-    fd.append('invalidate', 'true');
-    const res = await fetch('https://api.cloudinary.com/v1_1/' + CL_CLOUD + '/raw/upload', {
+    const res = await fetch('https://api.cloudinary.com/v1_1/' + CL_CLOUD + '/auto/upload', {
       method: 'POST',
       body: fd
     });
