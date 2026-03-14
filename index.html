@@ -7,8 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --yellow:#FFD329; --dark:#0D0D0D; --mid:#1A1A1A; --card:#222222;
-    --border:#333; --text:#F0EDE6; --muted:#888; --red:#E3173E; --green:#00B36B; --blue:#1E6FBA;
+    --yellow:#FFD329; --dark:#0A0A0A; --mid:#141414; --card:#1C1C1C;
+    --border:#2A2A2A; --text:#F0EDE6; --muted:#666; --red:#E3173E; --green:#00B36B; --blue:#1E6FBA;
+    --yellow-dim:rgba(255,211,41,0.12);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--dark);color:var(--text);font-family:'Barlow Condensed',sans-serif;min-height:100vh;overflow-x:hidden;}
@@ -16,91 +17,70 @@
   /* ── WELCOME SCREEN ── */
   #welcomeScreen{
     position:fixed;inset:0;background:var(--dark);z-index:500;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:24px;text-align:center;
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    padding:48px 24px 32px;text-align:center;overflow-y:auto;
   }
   .welcome-roundel{
-    width:80px;height:80px;background:var(--red);border-radius:50%;
-    display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:24px;
+    width:88px;height:88px;background:var(--red);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:20px;
+    box-shadow:0 0 0 6px rgba(227,23,62,0.15);
   }
-  .welcome-roundel::after{content:'';position:absolute;width:104px;height:20px;background:var(--blue);border-radius:4px;}
+  .welcome-roundel::after{content:'';position:absolute;width:114px;height:22px;background:var(--blue);border-radius:4px;}
   .welcome-roundel-text{position:absolute;color:white;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;z-index:1;text-align:center;line-height:1.2;}
-  .welcome-title{font-family:'Black Han Sans',sans-serif;font-size:32px;letter-spacing:1px;color:var(--yellow);margin-bottom:6px;}
-  .welcome-sub{font-size:14px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:32px;}
-  .welcome-label{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
-  .welcome-players{display:flex;flex-direction:column;gap:10px;width:100%;max-width:360px;max-height:50vh;overflow-y:auto;margin-bottom:16px;}
-  .welcome-player-btn{
-    background:var(--card);border:2px solid var(--border);border-radius:12px;
-    color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;
-    padding:16px;cursor:pointer;transition:all 0.2s;
-  }
-  .welcome-player-btn:hover,.welcome-player-btn:active{border-color:var(--yellow);background:#1e1b09;color:var(--yellow);}
-  .welcome-add-area{display:flex;gap:8px;width:100%;max-width:360px;margin-bottom:10px;}
-  .welcome-input{
-    flex:1;background:var(--card);border:2px solid var(--border);border-radius:10px;
-    color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;
-    padding:12px 14px;outline:none;transition:border-color 0.2s;
-  }
-  .welcome-input:focus{border-color:var(--yellow);}
-  .welcome-input::placeholder{color:var(--muted);}
-  .welcome-add-btn{
-    background:var(--yellow);border:none;border-radius:10px;color:var(--dark);
-    font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;
-    padding:12px 18px;cursor:pointer;
-  }
-  .welcome-note{font-size:12px;color:var(--muted);max-width:300px;line-height:1.5;}
+  .welcome-title{font-family:'Black Han Sans',sans-serif;font-size:36px;letter-spacing:2px;color:var(--yellow);margin-bottom:4px;}
+  .welcome-sub{font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:32px;}
+  .welcome-note{font-size:13px;color:var(--muted);max-width:300px;line-height:1.5;}
 
   /* ── HEADER ── */
   header{
-    background:var(--yellow);color:var(--dark);padding:14px 20px;
+    background:var(--yellow);color:var(--dark);padding:12px 18px;
     display:flex;align-items:center;gap:12px;
-    position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(255,211,41,0.3);
+    position:sticky;top:0;z-index:100;
   }
-  .roundel{width:46px;height:46px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;}
-  .roundel::after{content:'';position:absolute;width:60px;height:13px;background:var(--blue);border-radius:3px;}
+  .roundel{width:44px;height:44px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;}
+  .roundel::after{content:'';position:absolute;width:58px;height:12px;background:var(--blue);border-radius:3px;}
   .roundel-text{position:absolute;color:white;font-size:7px;font-weight:700;font-family:'DM Mono',monospace;z-index:1;text-align:center;line-height:1.1;}
-  .header-info h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(16px,3.5vw,22px);letter-spacing:1px;line-height:1;}
-  .header-you{font-size:11px;font-weight:700;opacity:0.65;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+  .header-info h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(15px,3.5vw,20px);letter-spacing:1px;line-height:1;}
   .header-right{margin-left:auto;text-align:right;flex-shrink:0;}
-  .progress-big{font-family:'Black Han Sans',sans-serif;font-size:28px;line-height:1;}
-  .progress-label{font-size:10px;font-weight:700;opacity:0.6;text-transform:uppercase;letter-spacing:2px;}
+  .progress-big{font-family:'Black Han Sans',sans-serif;font-size:26px;line-height:1;}
+  .progress-label{font-size:9px;font-weight:700;opacity:0.55;text-transform:uppercase;letter-spacing:2px;}
 
-  .progress-track{background:rgba(0,0,0,0.2);height:6px;}
-  .progress-fill{height:100%;background:var(--dark);transition:width 0.5s cubic-bezier(0.34,1.56,0.64,1);border-radius:0 3px 3px 0;}
+  .progress-track{background:rgba(0,0,0,0.25);height:4px;}
+  .progress-fill{height:100%;background:var(--dark);transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
 
   /* ── TABS ── */
-  .tabs{display:flex;background:var(--mid);border-bottom:2px solid var(--border);position:sticky;top:88px;z-index:99;}
-  .tab{flex:1;padding:11px 8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:none;border:none;color:var(--muted);cursor:pointer;transition:all 0.2s;border-bottom:3px solid transparent;margin-bottom:-2px;}
+  .tabs{display:flex;background:var(--mid);border-bottom:1px solid var(--border);position:sticky;top:70px;z-index:99;}
+  .tab{flex:1;padding:13px 8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:none;border:none;color:var(--muted);cursor:pointer;transition:all 0.2s;border-bottom:3px solid transparent;margin-bottom:-1px;}
   .tab.active{color:var(--yellow);border-bottom-color:var(--yellow);}
 
-  .panel{display:none;padding:16px;}
+  .panel{display:none;}
   .panel.active{display:block;}
 
   /* ── TRACKER ── */
-  .survival-banner{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--yellow);padding:12px 16px;margin-bottom:16px;border-radius:0 8px 8px 0;font-size:17px;font-weight:700;letter-spacing:1px;}
-  .survival-banner span{color:var(--yellow);}
-  .pubs-grid{display:flex;flex-direction:column;gap:6px;}
-  .pub-row{background:var(--card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;transition:all 0.2s;user-select:none;position:relative;overflow:hidden;}
-  .pub-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,211,41,0.08);transition:width 0.3s;}
-  .pub-row.done{border-color:var(--yellow);background:#1e1b09;}
-  .pub-row.done::before{width:100%;}
-  .pub-row:active{transform:scale(0.99);}
-  .stop-num{width:28px;height:28px;background:var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;flex-shrink:0;transition:all 0.3s;}
+  .survival-banner{background:var(--card);border-left:3px solid var(--yellow);padding:12px 16px;font-size:15px;font-weight:700;letter-spacing:0.5px;color:var(--muted);}
+  .survival-banner span{color:var(--text);}
+  .pubs-grid{display:flex;flex-direction:column;gap:1px;background:var(--border);}
+  .pub-row{background:var(--card);display:flex;align-items:center;gap:14px;padding:16px 16px;cursor:pointer;transition:background 0.15s;user-select:none;position:relative;}
+  .pub-row.done{background:#1a1500;border-color:var(--yellow) !important;border-width:2px;}
+  .pub-row:active{background:#1a1a1a;}
+  .stop-num{width:34px;height:34px;background:var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0;transition:all 0.25s;}
   .pub-row.done .stop-num{background:var(--yellow);color:var(--dark);}
-  .circle-dot{width:9px;height:9px;border-radius:50%;background:var(--yellow);border:2px solid var(--dark);flex-shrink:0;}
+  .circle-dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background 0.25s;}
+  .pub-row.done .circle-dot{background:var(--yellow);}
   .pub-info{flex:1;min-width:0;}
-  .pub-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .pub-station{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
-  .checkin-avatars{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
-  .checkin-avatar{background:var(--yellow);color:var(--dark);border-radius:4px;font-size:10px;font-weight:700;padding:1px 5px;font-family:'DM Mono',monospace;}
-  .check-icon{font-size:18px;opacity:0;transform:scale(0) rotate(-20deg);transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);flex-shrink:0;}
-  .pub-row.done .check-icon{opacity:1;transform:scale(1) rotate(0);}
-  .pub-thumb{width:36px;height:36px;border-radius:6px;object-fit:cover;border:2px solid var(--yellow);flex-shrink:0;}
-  .map-btn{background:var(--border);border:none;border-radius:6px;color:var(--muted);font-size:15px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s;}
-  .map-btn:hover{background:var(--blue);color:white;}
+  .pub-name{font-size:18px;font-weight:700;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .pub-row.done .pub-name{color:var(--yellow);}
+  .pub-station{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+  .checkin-avatars{display:flex;gap:3px;margin-top:4px;}
+  .checkin-avatar{background:var(--yellow);color:var(--dark);border-radius:3px;font-size:9px;font-weight:700;padding:1px 5px;font-family:'DM Mono',monospace;}
+  .check-icon{width:34px;height:34px;border-radius:50%;background:transparent;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;opacity:0.3;flex-shrink:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+  .pub-row.done .check-icon{background:var(--yellow);border-color:var(--yellow);opacity:1;transform:scale(1.15);box-shadow:0 0 10px rgba(255,211,41,0.4);}
+  .pub-thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;}
+  .map-btn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:14px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.15s;}
+  .map-btn:active{background:var(--blue);border-color:var(--blue);color:white;}
 
   /* ── MODAL ── */
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
   .modal-overlay.open{opacity:1;pointer-events:all;}
   .modal-sheet{background:var(--mid);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px 16px 44px;width:100%;max-width:480px;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.34,1.2,0.64,1);max-height:90vh;overflow-y:auto;}
   .modal-overlay.open .modal-sheet{transform:translateY(0);}
@@ -152,30 +132,8 @@
   .lightbox-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;color:white;font-size:20px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
 
   /* ── LEADERBOARD ── */
-  .leaderboard-list{display:flex;flex-direction:column;gap:8px;}
-  .player-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;animation:fadeIn 0.3s ease;}
-  .player-card:first-child{border-color:var(--yellow);}
-  .player-card:nth-child(2){border-color:#aaa;}
-  .player-card:nth-child(3){border-color:#cd7f32;}
-  .rank-badge{width:32px;height:32px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0;}
-  .player-card:first-child .rank-badge{background:var(--yellow);color:var(--dark);}
-  .player-card:nth-child(2) .rank-badge{background:#aaa;color:var(--dark);}
-  .player-card:nth-child(3) .rank-badge{background:#cd7f32;color:var(--dark);}
-  .player-info{flex:1;}
-  .player-name{font-size:17px;font-weight:700;}
-  .player-status-line{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;}
-  .status-selector{display:flex;gap:6px;margin-top:4px;}
-  .status-btn{font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:600;transition:all 0.2s;}
-  .status-btn.active-status{border-color:var(--green);color:var(--green);background:rgba(0,179,107,0.1);}
-  .status-btn.out-status{border-color:var(--red);color:var(--red);background:rgba(227,23,62,0.1);}
-  .player-score-area{display:flex;align-items:center;gap:8px;}
-  .score-display{font-family:'Black Han Sans',sans-serif;font-size:24px;color:var(--yellow);min-width:40px;text-align:right;}
-  .score-btns{display:flex;flex-direction:column;gap:3px;}
-  .score-btn{width:28px;height:24px;background:var(--border);border:none;border-radius:4px;color:var(--text);font-size:14px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
-  .score-btn:hover{background:var(--yellow);color:var(--dark);}
-  .score-btn:disabled{opacity:0.2;cursor:not-allowed;}
-  .score-btn:disabled:hover{background:var(--border);color:var(--text);}
-  .lock-icon{font-size:16px;color:var(--muted);flex-shrink:0;width:32px;text-align:center;}
+
+
   .remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px;border-radius:4px;flex-shrink:0;transition:color 0.2s;}
   .remove-btn:hover{color:var(--red);}
   .remove-btn:disabled{opacity:0.2;cursor:not-allowed;}
@@ -208,19 +166,19 @@
   .pw-submit{width:100%;background:var(--yellow);border:none;border-radius:10px;color:var(--dark);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;padding:14px;cursor:pointer;margin-bottom:10px;}
   .pw-cancel{background:none;border:none;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;cursor:pointer;padding:6px;}
 
-  .pace-section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:16px;}
-  .pace-section h3{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);margin-bottom:12px;}
+  .pace-section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px;}
+  .pace-section h3{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--yellow);margin-bottom:14px;opacity:0.8;}
   .pace-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
   .pace-label{font-size:13px;color:var(--muted);min-width:80px;}
-  .pace-input{background:var(--border);border:1px solid #444;border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:15px;padding:6px 10px;width:90px;outline:none;}
+  .pace-input{background:var(--border);border:1px solid #444;border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:16px;padding:8px 12px;width:140px;outline:none;}
   .pace-input:focus{border-color:var(--yellow);}
   .pace-result{margin-top:12px;padding:10px 14px;background:rgba(255,211,41,0.08);border:1px solid rgba(255,211,41,0.3);border-radius:8px;font-size:14px;line-height:1.6;}
   .pace-result strong{color:var(--yellow);}
   .empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
   .empty-state .emoji{font-size:48px;margin-bottom:12px;}
 
-  footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;font-family:'DM Mono',monospace;border-top:1px solid var(--border);margin-top:20px;}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--yellow);color:var(--dark);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;padding:12px 24px;border-radius:30px;z-index:400;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;}
+  footer{text-align:center;padding:20px;color:var(--muted);font-size:11px;font-family:'DM Mono',monospace;border-top:1px solid var(--border);margin-top:16px;letter-spacing:1px;}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--yellow);color:var(--dark);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;padding:13px 26px;border-radius:40px;z-index:400;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;}
   .toast.show{transform:translateX(-50%) translateY(0);}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
   @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
@@ -229,7 +187,7 @@
   .pub-row.current-stop{border-color:#4a9eff !important;background:#0d1a2e !important;box-shadow:0 0 0 2px rgba(74,158,255,0.2);}
   .pub-row.current-stop .stop-num{background:#4a9eff;color:#fff;}
   .pub-name-row{display:flex;align-items:baseline;gap:8px;}
-  .pub-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--yellow);opacity:0.8;font-weight:400;white-space:nowrap;}
+  .pub-time{font-family:'DM Mono',monospace;font-size:13px;color:var(--yellow);opacity:0.8;font-weight:400;white-space:nowrap;}
   .pub-row.done .pub-time{opacity:0.4;}
 </style>
 </head>
@@ -241,68 +199,26 @@
   <div class="welcome-title">Circle Line</div>
   <div class="welcome-sub">Pub Crawl · 27 Stops</div>
 
-  <!-- STEP 1: How to enable — shown first -->
-  <div id="welcomeStep1" style="display:none;">
-    <div style="background:rgba(255,211,41,0.1);border:1px solid rgba(255,211,41,0.3);border-radius:14px;padding:20px;display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;">
-      <span style="font-size:28px;line-height:1;flex-shrink:0;">👇</span>
+  <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:360px;margin-top:8px;">
+    <div style="background:rgba(255,211,41,0.1);border:1px solid rgba(255,211,41,0.3);border-radius:14px;padding:20px;display:flex;align-items:flex-start;gap:14px;">
+      <span style="font-size:24px;line-height:1;flex-shrink:0;">🔔</span>
       <div>
-        <div style="font-size:19px;font-weight:700;color:var(--yellow);margin-bottom:8px;line-height:1.2;">How to get started</div>
-        <div style="font-size:16px;color:var(--text);line-height:1.6;">Add your name 👇 then tap it 👇 — the app will ask for permission. <strong style="color:var(--yellow);">Tap Allow!</strong></div>
+        <div style="font-size:18px;font-weight:700;color:var(--yellow);margin-bottom:6px;">Turn on notifications</div>
+        <div style="font-size:15px;color:var(--text);line-height:1.5;">Get buzzed 10 mins before you need to leave each pub, and again when it's time to go.</div>
       </div>
     </div>
-
-    <!-- Add name input -->
-    <div id="welcomeAddArea">
-    <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:10px;">Add your name 👇</div>
-    <div class="welcome-add-area">
-      <input class="welcome-input" type="text" id="welcomeNameInput" placeholder="Add your name..." maxlength="20" onkeydown="if(event.key==='Enter')welcomeAddPlayer()">
-      <button class="welcome-add-btn" onclick="welcomeAddPlayer()">+</button>
-    </div>
-    <p class="welcome-note">Add everyone's names, then each person taps themselves on their own phone.</p>
-    </div>
-    <div class="welcome-players" id="welcomePlayerList"></div>
-  </div>
-
-  <!-- STEP 2: Notification info — shown after first name added -->
-  <div id="welcomeStep2" style="display:none;margin-top:20px;display:none;">
-    <div style="display:flex;flex-direction:column;gap:12px;">
-
-      <div style="background:rgba(255,211,41,0.1);border:1px solid rgba(255,211,41,0.3);border-radius:14px;padding:20px;display:flex;align-items:flex-start;gap:14px;">
-        <span style="font-size:28px;line-height:1;flex-shrink:0;">🔔</span>
-        <div>
-          <div style="font-size:19px;font-weight:700;color:var(--yellow);margin-bottom:8px;line-height:1.2;">Turn on notifications</div>
-          <div style="font-size:16px;color:var(--text);line-height:1.6;">This app will buzz your phone when it's nearly time to leave each pub — so you never miss a stop.</div>
-        </div>
-      </div>
-
-      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;align-items:flex-start;gap:14px;">
-        <span style="font-size:28px;line-height:1;flex-shrink:0;">⏰</span>
-        <div>
-          <div style="font-size:19px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.2;">Two alerts per pub</div>
-          <div style="font-size:16px;color:var(--muted);line-height:1.6;"><strong style="color:var(--text);">10 minutes before</strong> you need to leave, then again <strong style="color:var(--text);">right when it's time to go.</strong></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- STEP 3: iPhone tip — shown after step 2 -->
-  <div id="welcomeStep3" style="display:none;margin-top:12px;">
     <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;align-items:flex-start;gap:14px;">
-      <span style="font-size:28px;line-height:1;flex-shrink:0;">📱</span>
+      <span style="font-size:24px;line-height:1;flex-shrink:0;">📱</span>
       <div>
-        <div style="font-size:19px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.2;">iPhone users</div>
-        <div style="font-size:16px;color:var(--muted);line-height:1.6;">Add this page to your <strong style="color:var(--text);">Home Screen</strong> first — notifications only work as a home screen app on iPhone.<br><br><span style="font-size:14px;color:var(--muted);">Safari → Share button → Add to Home Screen</span></div>
+        <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;">iPhone users</div>
+        <div style="font-size:15px;color:var(--muted);line-height:1.5;">Add to your <strong style="color:var(--text);">Home Screen</strong> first for notifications to work.<br><span style="font-size:13px;">Safari → Share → Add to Home Screen</span></div>
       </div>
     </div>
   </div>
 
-  <!-- NAME PICKER — shown after confirming instructions -->
-  <div id="welcomeNamePicker" style="display:none;margin-top:20px;">
-    <div style="font-size:19px;font-weight:700;color:var(--yellow);margin-bottom:14px;text-align:center;">Who are you? 👇</div>
-    <div id="welcomeNamePickerList" style="display:flex;flex-direction:column;gap:10px;"></div>
-  </div>
-
+  <button onclick="startApp()" style="margin-top:24px;width:100%;max-width:360px;font-size:20px;font-weight:900;padding:20px;background:var(--yellow);color:var(--dark);border:none;border-radius:14px;cursor:pointer;letter-spacing:1px;font-family:'Barlow Condensed',sans-serif;">
+    Let's Go 🍺
+  </button>
 </div>
 
 <!-- ══ MAIN APP ══ -->
@@ -310,59 +226,55 @@
   <div class="roundel"><span class="roundel-text">PUB<br>CRAWL</span></div>
   <div class="header-info">
     <h1>Circle Line Pub Crawl</h1>
-    <div class="header-you" id="headerYou"></div>
   </div>
   <div class="header-right">
     <div class="progress-big" id="headerCount">0/27</div>
     <div class="progress-label">pubs done</div>
-    <div id="syncStatus" style="font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);text-align:right;margin-top:2px;">⏳ syncing</div>
   </div>
 </header>
 <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('tracker',this)">🗺️ Tracker</button>
-  <button class="tab" onclick="switchTab('photos',this)">📸 Photos</button>
-  <button class="tab" onclick="switchTab('leaderboard',this)">🏆 Board</button>
   <button class="tab" onclick="switchTab('admin',this)">⚙️ Admin</button>
 </div>
 
-<div class="panel active" id="panel-tracker">
-  <div id="countdownBanner" style="display:none;margin:0 0 10px;background:rgba(255,211,41,0.1);border:1px solid rgba(255,211,41,0.4);border-radius:10px;padding:10px 16px;text-align:center;">
-    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;">LEAVE CURRENT PUB IN</div>
-    <div id="countdownTimer" style="font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:var(--yellow);letter-spacing:3px;line-height:1.1;">--:--</div>
-    <div id="countdownLabel" style="font-size:11px;color:var(--muted);margin-top:3px;"></div>
+<div class="panel active" id="panel-tracker" style="padding:0;">
+  <!-- Sticky info block -->
+  <div id="trackerSticky" style="position:sticky;top:108px;z-index:98;background:var(--dark);padding:10px 16px 0;border-bottom:1px solid var(--border);">
+    <div id="countdownBanner" style="display:none;background:rgba(255,211,41,0.1);border:1px solid rgba(255,211,41,0.4);border-radius:10px;padding:10px 16px;text-align:center;margin-bottom:8px;">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;">LEAVE CURRENT PUB IN</div>
+      <div id="countdownTimer" style="font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:var(--yellow);letter-spacing:3px;line-height:1.1;">--:--</div>
+      <div id="countdownLabel" style="font-size:12px;color:var(--muted);margin-top:3px;"></div>
+    </div>
+    <div id="trackerPaceSummary" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);text-align:center;padding:2px 0 6px;"></div>
+    <div class="survival-banner" style="margin-bottom:0;">Status: <span id="survivalText">Not started yet… get to the pub! 🍺</span></div>
   </div>
-  <div id="trackerPaceSummary" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);text-align:center;padding:6px 0 8px;"></div>
-  <div class="survival-banner">Status: <span id="survivalText">Not started yet… get to the pub! 🍺</span></div>
-  <div class="pubs-grid" id="pubsGrid"></div>
-</div>
-
-<div class="panel" id="panel-photos">
-  <div id="photosContent"></div>
-</div>
-
-<div class="panel" id="panel-leaderboard">
-  <div class="leaderboard-list" id="leaderboardList"></div>
-</div>
-
-<div class="panel" id="panel-admin">
-  <div id="adminGate" style="display:block;">
-    <div style="text-align:center;padding:40px 20px;">
-      <div style="font-size:48px;margin-bottom:12px;">🔐</div>
-      <div style="font-family:'Black Han Sans',sans-serif;font-size:22px;color:var(--yellow);margin-bottom:8px;">ADMIN ACCESS</div>
-      <div style="color:var(--muted);font-size:14px;margin-bottom:20px;">Enter the password to manage the crawl</div>
-      <input class="pw-input" type="password" id="adminTabPwInput" placeholder="••••" maxlength="20"
-        onkeydown="if(event.key==='Enter')submitAdminTabPassword()"
-        style="box-sizing:border-box;max-width:200px;">
-      <button class="pw-submit" onclick="submitAdminTabPassword()">Unlock Admin</button>
+  <!-- Scrollable pub list -->
+  <div style="padding:12px 16px;">
+    <div class="pubs-grid" id="pubsGrid"></div>
+    <div id="notifNudge" style="margin-top:20px;background:rgba(255,211,41,0.08);border:1px solid rgba(255,211,41,0.25);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;">
+      <span style="font-size:28px;flex-shrink:0;">🔔</span>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--yellow);margin-bottom:4px;">Turn on notifications</div>
+        <div style="font-size:14px;color:var(--muted);line-height:1.5;">Get buzzed when it's time to leave each pub. <span style="color:var(--text);">Go to Settings → Notifications → enable for this site.</span></div>
+        <button onclick="requestNotifications()" style="margin-top:10px;background:var(--yellow);border:none;border-radius:8px;color:var(--dark);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;padding:8px 18px;cursor:pointer;">Enable now</button>
+      </div>
     </div>
   </div>
-  <div id="adminPanel" style="display:none;">
-    <div class="admin-bar unlocked" style="margin-bottom:16px;">
-      <div class="admin-status">🔓 Admin mode active<small>Full control enabled</small></div>
-      <button class="admin-btn" onclick="lockAdmin()" style="background:#333;color:var(--muted);">Lock</button>
-    </div>
+</div>
+
+<div class="panel" id="panel-admin" style="padding:0;">
+  <div id="adminGate" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;">
+    <div style="font-size:48px;margin-bottom:12px;">🔐</div>
+    <div style="font-family:'Black Han Sans',sans-serif;font-size:24px;color:var(--yellow);margin-bottom:8px;">ADMIN</div>
+    <div style="color:var(--muted);font-size:15px;margin-bottom:24px;">Enter the password</div>
+    <input class="pw-input" type="password" id="adminTabPwInput" placeholder="••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')submitAdminTabPassword()"
+      style="box-sizing:border-box;max-width:200px;display:block;margin:0 auto 12px;">
+    <button class="pw-submit" onclick="submitAdminTabPassword()">Unlock</button>
+  </div>
+  <div id="adminPanel" style="display:none;padding:16px;">
 
     <div class="pace-section">
       <h3>⏱ Timeline</h3>
@@ -390,23 +302,7 @@
       <div id="notifStatus" style="font-size:12px;color:var(--muted);text-align:center;"></div>
     </div>
 
-    <div class="pace-section" style="margin-top:12px;">
-      <h3>✏️ Edit Scores</h3>
-      <div id="adminScoreList"></div>
-    </div>
 
-    <div class="pace-section" style="margin-top:12px;">
-      <h3>👥 Players</h3>
-      <div style="color:var(--muted);font-size:13px;margin-bottom:12px;">Add or remove players from the crawl.</div>
-      <div id="adminPlayerList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"></div>
-      <div style="display:flex;gap:8px;">
-        <input id="adminAddNameInput" type="text" placeholder="Player name…"
-          onkeydown="if(event.key==='Enter')adminAddPlayer()"
-          style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;padding:10px 14px;outline:none;">
-        <button onclick="adminAddPlayer()"
-          style="background:var(--yellow);border:none;border-radius:8px;color:var(--dark);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;padding:10px 16px;cursor:pointer;white-space:nowrap;">+ Add</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -491,8 +387,7 @@ async function syncRead() {
     localStorage.setItem('clp_currentStop', JSON.stringify(adminCurrentStop));
     try { localStorage.setItem('clp_photos', JSON.stringify(pubPhotos)); } catch(e) {}
     renderTracker();
-    renderLeaderboard();
-    if (document.getElementById('panel-photos').classList.contains('active')) renderPhotosTab();
+      if (document.getElementById('panel-photos').classList.contains('active')) renderPhotosTab();
     if (adminUnlocked) renderAdminPanel();
   } catch(e) {
     console.warn('Sync read failed', e);
@@ -586,15 +481,34 @@ const PUBS = [
 ];
 
 const SURVIVAL = [
-  [0,'Not started yet… get to the pub! 🍺'],
-  [1,"You've started! One down, 26 to go 🚇"],
-  [5,'Warming up nicely. The legs still work 🦵'],
-  [9,'Pub #9 — feeling it yet? Stay strong 💪'],
-  [14,'HALFWAY! This is where legends are made 🏅'],
-  [18,'Seriously impressive. The finish line beckons 🎯'],
-  [23,'Four pubs to go. The body is a temple 🏛️'],
-  [26,'ONE PUB LEFT. You absolute hero 🙌'],
-  [27,"COMPLETED IT MATE. You've done it! 🏆🎉"],
+  [0,  "Sober. Tragic. Get to the pub 🍺"],
+  [1,  "One down. 26 to go. How's that pint? 😏"],
+  [2,  "Two pubs deep. Legs still work. Promising 🦵"],
+  [3,  "Three pubs. You're basically a professional 🎩"],
+  [4,  "Four in. The Shakespeare would be proud 📜"],
+  [5,  "Five pubs! Halfway to not remembering this 🍻"],
+  [6,  "Six down. The Blackfriar is behind you. Legend stuff 🏛️"],
+  [7,  "Seven pubs. Your liver has filed a complaint 📋"],
+  [8,  "Eight in. Ye Olde Watling salutes you 🍺"],
+  [9,  "Nine pubs. Feeling it yet? Course you are 😵"],
+  [10, "Ten stops! The Minories couldn't stop you 💪"],
+  [11, "Eleven down. Hamilton Hall was just the warm up 🎶"],
+  [12, "Twelve pubs. You're an absolute machine 🤖"],
+  [13, "Thirteen in. Lucky for some. Unlucky for your tab 💸"],
+  [14, "HALFWAY! 14 pubs. The Circle Line is yours 🚇🏅"],
+  [15, "Fifteen down. Farringdon couldn't hold you 🏃"],
+  [16, "Sixteen pubs. The Parcel Yard delivered alright 📦"],
+  [17, "Seventeen in. Euston Tap? More like Euston Slapped 👋"],
+  [18, "Eighteen pubs. Seriously — who ARE you? 🦁"],
+  [19, "Nineteen down. Baker Street, no mystery here 🔍"],
+  [20, "Twenty pubs. The Chapel couldn't save you now 🙏"],
+  [21, "Twenty one! Sawyers Arms has been sawed off 🪚"],
+  [22, "Twenty two. Bayswater Arms? Fully loaded 🎯"],
+  [23, "Twenty three pubs. Old Swan? You ARE the swan 🦢"],
+  [24, "Twenty four. The Britannia bows to you 🇬🇧"],
+  [25, "Twenty five pubs. The Stanhope? More like StanHOPE you make it 😂"],
+  [26, "TWENTY SIX. One pub left. Don't blow it now 😤"],
+  [27, "COMPLETED IT MATE. 27 pubs. Absolute royalty 🏆👑🎉"],
 ];
 
 // ── STATE ──
@@ -602,97 +516,40 @@ let players      = JSON.parse(localStorage.getItem('clp_players')  || '[]');
 let visited      = JSON.parse(localStorage.getItem('clp_visited')  || '[]');
 let playerVisits = JSON.parse(localStorage.getItem('clp_pvisits')  || '{}');
 let pubPhotos    = JSON.parse(localStorage.getItem('clp_photos')   || '{}');
-let currentUser  = localStorage.getItem('clp_currentUser') || null; // player name
+const currentUser = 'me'; // single user, no name needed
 let adminUnlocked = false;
 let modalStop = null;
 let adminCurrentStop = JSON.parse(localStorage.getItem('clp_currentStop') || 'null');
+let checkinTimes = JSON.parse(localStorage.getItem('clp_checkinTimes') || '{}'); // {stop: minutesOfDay}
 
 function save() {
   localStorage.setItem('clp_players',  JSON.stringify(players));
   localStorage.setItem('clp_visited',  JSON.stringify(visited));
   localStorage.setItem('clp_pvisits',  JSON.stringify(playerVisits));
-  if (currentUser) localStorage.setItem('clp_currentUser', currentUser);
   if (adminCurrentStop) localStorage.setItem('clp_currentStop', JSON.stringify(adminCurrentStop));
+  localStorage.setItem('clp_checkinTimes', JSON.stringify(checkinTimes));
   try { localStorage.setItem('clp_photos', JSON.stringify(pubPhotos)); }
   catch(e) { showToast('Storage full — delete some photos'); }
-  syncWrite(); // push to shared cloud
 }
 
-function currentPlayerIndex() {
-  return players.findIndex(p => p.name === currentUser);
-}
+function currentPlayerIndex() { return 0; }
 
 function playerStopCount(pi) {
   return Object.values(playerVisits).filter(arr => arr.includes(pi)).length;
 }
 
 // ── WELCOME SCREEN ──
-function renderWelcome() {
-  const list = document.getElementById('welcomePlayerList');
-  list.innerHTML = '';
-  document.getElementById('welcomeStep1').style.display = 'block';
-
-  if (players.length === 0) {
-    document.getElementById('welcomeStep2').style.display = 'none';
-    document.getElementById('welcomeStep3').style.display = 'none';
-    return;
-  }
-
-  // At least one name added — hide the add name input, show notification steps
-  document.getElementById('welcomeAddArea').style.display = 'none';
-  document.getElementById('welcomeStep2').style.display = 'flex';
-  document.getElementById('welcomeStep2').style.flexDirection = 'column';
-  document.getElementById('welcomeStep3').style.display = 'block';
-
-  // Single confirmation button
-  const btn = document.createElement('button');
-  btn.style.cssText = 'width:100%;font-size:18px;padding:18px;background:var(--yellow);color:var(--dark);border:none;border-radius:14px;font-weight:900;letter-spacing:1px;margin-top:8px;cursor:pointer;';
-  btn.textContent = 'I have read all the instructions below 👇';
-  btn.onclick = () => {
-    document.getElementById('welcomeStep1').style.display = 'none';
-    document.getElementById('welcomeStep2').style.display = 'none';
-    document.getElementById('welcomeStep3').style.display = 'none';
-    document.getElementById('welcomeNamePicker').style.display = 'block';
-    renderNamePicker();
-  };
-  list.appendChild(btn);
-}
-
-function renderNamePicker() {
-  const pickerList = document.getElementById('welcomeNamePickerList');
-  pickerList.innerHTML = '';
-  players.forEach(p => {
-    const btn = document.createElement('button');
-    btn.style.cssText = 'width:100%;font-size:20px;font-weight:700;padding:18px;background:var(--card);border:1px solid var(--border);border-radius:14px;color:var(--text);cursor:pointer;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;';
-    btn.textContent = p.name;
-    btn.onclick = () => selectUser(p.name);
-    pickerList.appendChild(btn);
-  });
-}
-
-function welcomeAddPlayer() {
-  const input = document.getElementById('welcomeNameInput');
-  const name = input.value.trim();
-  if (!name) return;
-  if (players.find(p => p.name === name)) { showToast('Name already added!'); return; }
-  players.push({ name, score: 0, status: 'active' });
-  input.value = '';
-  save();
-  renderWelcome();
-}
-
-function selectUser(name) {
-  currentUser = name;
-  localStorage.setItem('clp_currentUser', name);
+function startApp() {
   document.getElementById('welcomeScreen').style.display = 'none';
-  document.getElementById('headerYou').textContent = '👤 ' + name;
   renderTracker();
-  renderLeaderboard();
   calcPace();
   askForNotifications();
-  startSync(); // begin polling for other players' updates
-  syncWrite(); // push our current state up immediately
 }
+
+function renderWelcome() {} // no-op — welcome is static HTML now
+function welcomeAddPlayer() {}
+function renderNamePicker() {}
+function selectUser(name) { startApp(); }
 
 // ── TRACKER ──
 function getSchedule() {
@@ -700,6 +557,52 @@ function getSchedule() {
   const mpp = parseInt(document.getElementById('minsPerPub').value) || 20;
   const [sh, sm] = s.split(':').map(Number);
   return buildSchedule(sh * 60 + sm, mpp);
+}
+
+function toggleCheckin(stop) {
+  const ci = currentPlayerIndex();
+  if (!playerVisits[stop]) playerVisits[stop] = [];
+  const vi = playerVisits[stop].indexOf(ci);
+  if (vi === -1) {
+    playerVisits[stop].push(ci);
+    if (!visited.includes(stop)) visited.push(stop);
+    // Record actual arrival time
+    const now = new Date();
+    const nowMins = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+    checkinTimes[stop] = nowMins;
+    // Update start time to earliest actual check-in
+    const earliest = Math.min(...Object.values(checkinTimes));
+    const eh = Math.floor(earliest / 60);
+    const em = Math.floor(earliest % 60);
+    const timeStr = eh.toString().padStart(2,'0') + ':' + em.toString().padStart(2,'0');
+    const startEl = document.getElementById('startTime');
+    if (startEl && startEl.value !== timeStr) {
+      startEl.value = timeStr;
+      calcPace();
+    }
+    showToast('🍺 Stop #' + stop + ' checked in!');
+  } else {
+    playerVisits[stop].splice(vi, 1);
+    if (!playerVisits[stop].length) {
+      visited = visited.filter(s => s !== stop);
+    }
+    delete checkinTimes[stop];
+    // If no pubs left checked, clear start time
+    if (Object.keys(checkinTimes).length === 0) {
+      const startEl = document.getElementById('startTime');
+      if (startEl) { startEl.value = '11:00'; calcPace(); }
+    }
+    showToast('Unchecked stop #' + stop);
+  }
+  const row = document.getElementById('pub-' + stop);
+  if (row) row.classList.add('just-done');
+  save();
+  renderTracker();
+  // Restart countdown so it reacts to the new check-in
+  const s = document.getElementById('startTime').value || '11:00';
+  const mpp = parseInt(document.getElementById('minsPerPub').value) || 20;
+  const [sh, sm] = s.split(':').map(Number);
+  startCountdown(buildSchedule(sh * 60 + sm, mpp), mpp);
 }
 
 function renderTracker() {
@@ -714,7 +617,7 @@ function renderTracker() {
     const isCurrent = adminCurrentStop === pub.stop;
     row.className = 'pub-row' + (globalDone ? ' done' : '') + (isCurrent ? ' current-stop' : '');
     row.id = 'pub-' + pub.stop;
-    const avatars = visitors.map(pi => players[pi] ? '<span class="checkin-avatar">' + players[pi].name.slice(0,3).toUpperCase() + '</span>' : '').join('');
+    const avatars = ''; // removed player avatars
     const thumb = photos.length ? '<img class="pub-thumb" src="' + photos[photos.length-1] + '" alt="pint">' : '';
     const sched = schedule[pub.stop - 1];
     const timeLabel = '<span class="pub-time">' + fmtTime(sched.arrive) + '</span>';
@@ -730,7 +633,7 @@ function renderTracker() {
       '<div class="check-icon">🍺</div>' +
       '<button class="map-btn" title="Open in Maps">📍</button>';
     row.querySelector('.map-btn').addEventListener('click', e => { e.stopPropagation(); openMap(pub.q); });
-    row.addEventListener('click', () => openModal(pub.stop));
+    row.addEventListener('click', () => toggleCheckin(pub.stop));
     grid.appendChild(row);
   });
   updateProgress();
@@ -797,7 +700,7 @@ function openModal(stop) {
         const any = (playerVisits[stop] || []).length > 0;
         if (any && !visited.includes(stop)) visited.push(stop);
         if (!any) visited = visited.filter(s => s !== stop);
-        save(); renderTracker(); renderLeaderboard(); openModal(stop);
+        save(); renderTracker(); openModal(stop);
       };
       list.appendChild(myBtn);
     }
@@ -832,7 +735,7 @@ function openModal(stop) {
             const any = (playerVisits[stop] || []).length > 0;
             if (any && !visited.includes(stop)) visited.push(stop);
             if (!any) visited = visited.filter(s => s !== stop);
-            save(); renderTracker(); renderLeaderboard(); openModal(stop);
+            save(); renderTracker(); openModal(stop);
           };
           list.appendChild(btn);
         } else {
@@ -998,12 +901,26 @@ function submitAdminTabPassword() {
   }
 }
 
+function submitAdminTabPassword() {
+  const inp = document.getElementById('adminTabPwInput');
+  if (inp.value === ADMIN_PASSWORD) {
+    adminUnlocked = true;
+    document.getElementById('adminGate').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    renderAdminPanel();
+    showToast('🔓 Admin unlocked!');
+  } else {
+    inp.classList.add('error');
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 600);
+  }
+}
+
 function lockAdmin() {
   adminUnlocked = false;
-  document.getElementById('adminGate').style.display = 'block';
+  document.getElementById('adminGate').style.display = 'flex';
   document.getElementById('adminPanel').style.display = 'none';
   document.getElementById('adminTabPwInput').value = '';
-  renderLeaderboard();
   showToast('🔒 Admin locked');
 }
 
@@ -1017,7 +934,7 @@ function adminAddPlayer() {
   }
   players.push({ name, score: 0, status: 'active' });
   inp.value = '';
-  save(); renderLeaderboard(); renderAdminPanel();
+  save(); renderAdminPanel();
   showToast('✅ ' + name + ' added!');
 }
 
@@ -1030,7 +947,7 @@ function adminRemovePlayer(i) {
   });
   players.splice(i, 1);
   if (currentUser === p.name) currentUser = null;
-  save(); renderTracker(); renderLeaderboard(); renderAdminPanel();
+  save(); renderTracker(); renderAdminPanel();
   showToast('Removed ' + p.name);
 }
 
@@ -1170,8 +1087,7 @@ function submitPassword() {
   if (val === ADMIN_PASSWORD) {
     adminUnlocked = true;
     document.getElementById('pwModal').classList.remove('open');
-    renderLeaderboard();
-    showToast('🔓 Admin unlocked!');
+      showToast('🔓 Admin unlocked!');
     if (modalStop !== null) openModal(modalStop);
   } else {
     const inp = document.getElementById('pwInput');
@@ -1186,58 +1102,7 @@ function closePwModal() { document.getElementById('pwModal').classList.remove('o
 function updateAdminBar() { /* legacy no-op */ }
 
 // ── LEADERBOARD ──
-function changeScore(i, d) {
-  if (!adminUnlocked) { showToast('🔒 Unlock admin to edit scores'); return; }
-  players[i].score = Math.max(0, players[i].score + d);
-  save(); renderLeaderboard(); renderAdminPanel();
-}
-function setStatus(i, s) { players[i].status = s; save(); renderLeaderboard(); }
-
-function renderLeaderboard() {
-  const sorted = [...players].sort((a,b) => b.score - a.score);
-  const list = document.getElementById('leaderboardList');
-  list.innerHTML = '';
-  if (!players.length) {
-    list.innerHTML = '<div class="empty-state"><div class="emoji">🍻</div><p>No players yet — add names on the welcome screen</p></div>';
-    return;
-  }
-  sorted.forEach((p, rank) => {
-    const oi = players.indexOf(p);
-    const emoji = p.status==='out'?'😵':p.status==='toilet'?'🚽':'🍺';
-    const pubs = playerStopCount(oi);
-    const isMe = p.name === currentUser;
-    const card = document.createElement('div');
-    card.className = 'player-card';
-    if (isMe) card.style.outline = '2px solid rgba(255,211,41,0.4)';
-
-    const scoreControls = adminUnlocked
-      ? `<div class="player-score-area">
-          <div class="score-display">${p.score}</div>
-          <div class="score-btns">
-            <button class="score-btn" onclick="changeScore(${oi},10)">▲</button>
-            <button class="score-btn" onclick="changeScore(${oi},-10)">▼</button>
-          </div>
-        </div>`
-      : `<div class="player-score-area">
-          <div class="score-display">${p.score}</div>
-          <div class="lock-icon">🔒</div>
-        </div>`;
-
-    card.innerHTML = `
-      <div class="rank-badge">${rank===0?'👑':rank+1}</div>
-      <div class="player-info">
-        <div class="player-name">${p.name} ${emoji}${isMe?' <span style="font-size:11px;color:var(--yellow);font-family:DM Mono,monospace">YOU</span>':''}</div>
-        <div class="player-status-line">${pubs}/27 pubs · ${p.score} pts</div>
-        <div class="status-selector">
-          <button class="status-btn ${p.status==='active'?'active-status':''}" onclick="setStatus(${oi},'active')">Going</button>
-          <button class="status-btn ${p.status==='toilet'?'active-status':''}" onclick="setStatus(${oi},'toilet')">Nature 🚽</button>
-          <button class="status-btn ${p.status==='out'?'out-status':''}" onclick="setStatus(${oi},'out')">Tapped out</button>
-        </div>
-      </div>
-      ${scoreControls}`;
-    list.appendChild(card);
-  });
-}
+// Leaderboard removed
 
 // ── PACE ──
 // Travel times in minutes between consecutive pubs (walk + tube + walk to next pub)
@@ -1288,8 +1153,9 @@ function buildSchedule(startMins, minsPerPub) {
 }
 
 function fmtTime(totalMins) {
-  const h = Math.floor(((totalMins % 1440) + 1440) % 1440 / 60);
-  const m = ((totalMins % 1440) + 1440) % 1440 % 60;
+  const total = Math.round(((totalMins % 1440) + 1440) % 1440);
+  const h = Math.floor(total / 60);
+  const m = total % 60;
   return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
 }
 
@@ -1332,16 +1198,25 @@ function startCountdown(schedule, minsPerPub) {
   const banner = document.getElementById('countdownBanner');
   const timerEl = document.getElementById('countdownTimer');
   const labelEl = document.getElementById('countdownLabel');
+  const _minsPerPub = minsPerPub; // capture for tick closure
 
   function tick() {
     const now = new Date();
     const nowMins = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
 
-    // Find the current pub — which stop are we at right now?
-    // Current stop = last stop whose arrive time has passed
+    // Find current pub — prefer last actually checked-in stop, fall back to schedule
     let currentIdx = -1;
-    for (let i = 0; i < schedule.length; i++) {
-      if (nowMins >= schedule[i].arrive) currentIdx = i;
+    // First check actual check-ins
+    for (let i = 0; i < 27; i++) {
+      if (visited.includes(i + 1) || (playerVisits[i + 1] && playerVisits[i + 1].length > 0)) {
+        currentIdx = i;
+      }
+    }
+    // If nothing checked in yet, use schedule time
+    if (currentIdx === -1) {
+      for (let i = 0; i < schedule.length; i++) {
+        if (nowMins >= schedule[i].arrive) currentIdx = i;
+      }
     }
 
     if (currentIdx === -1) {
@@ -1368,8 +1243,17 @@ function startCountdown(schedule, minsPerPub) {
       return;
     }
 
-    // Time left at current pub before we need to leave
-    const secsLeft = Math.round((cur.leave - nowMins) * 60);
+    // Use actual check-in time if available, else scheduled arrive time
+    const actualArrival = checkinTimes[cur.stop] !== undefined ? checkinTimes[cur.stop] : cur.arrive;
+    const actualLeave = actualArrival + _minsPerPub;
+    const secsLeft = Math.round((actualLeave - nowMins) * 60);
+    // Show early/late status
+    const diffMins = checkinTimes[cur.stop] !== undefined
+      ? Math.round(checkinTimes[cur.stop] - cur.arrive) : null;
+    const earlyLate = diffMins === null ? ''
+      : diffMins < -1 ? ' · ⚡ ' + Math.abs(diffMins) + 'm early'
+      : diffMins > 1  ? ' · 🐢 ' + diffMins + 'm late'
+      : '';
 
     banner.style.display = 'block';
 
@@ -1389,7 +1273,7 @@ function startCountdown(schedule, minsPerPub) {
       timerEl.textContent = (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
       timerEl.style.color = secsLeft < 180 ? '#ff9944' : 'var(--yellow)';
       if (currentIdx < 26) {
-        labelEl.textContent = 'Stop #' + cur.stop + ' ' + PUBS[currentIdx].name + ' → leave for ' + PUBS[currentIdx + 1].station + ' by ' + fmtTime(cur.leave);
+        labelEl.textContent = 'Stop #' + cur.stop + ' ' + PUBS[currentIdx].name + earlyLate + ' → leave by ' + fmtTime(actualLeave);
       }
     }
   }
@@ -1411,7 +1295,7 @@ function switchTab(name, btn) {
       document.getElementById('adminPanel').style.display = 'block';
       renderAdminPanel();
     } else {
-      document.getElementById('adminGate').style.display = 'block';
+      document.getElementById('adminGate').style.display = 'flex';
       document.getElementById('adminPanel').style.display = 'none';
     }
   }
@@ -1437,6 +1321,8 @@ function askForNotifications() {
       if (perm === 'granted') {
         showToast('🔔 Notifications on!');
         new Notification('Circle Line Pub Crawl 🍺', { body: 'Notifications ready — see you at the pub!' });
+        const nudge = document.getElementById('notifNudge');
+        if (nudge) nudge.style.display = 'none';
       }
     });
   }, 1500);
@@ -1448,9 +1334,7 @@ const savedUser = localStorage.getItem('clp_currentUser');
 if (savedUser && players.find(p => p.name === savedUser)) {
   currentUser = savedUser;
   document.getElementById('welcomeScreen').style.display = 'none';
-  document.getElementById('headerYou').textContent = '👤 ' + currentUser;
   renderTracker();
-  renderLeaderboard();
   startSync(); // returning user — start syncing immediately
 } else {
   renderWelcome(); // new user — welcome screen, no sync until logged in
